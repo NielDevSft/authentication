@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  sql-server:
+    build:
+      context: ./data-base
+    ports:
+      - "1433:1433"
+    networks:
+      - elastic
+  mssqltools:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      - sql-server
+    volumes:
+      - ./data-base/sql-scripts/init-lojadb.sql:/tmp/init-lojadb.sql
+      - ./data-base/sql-scripts/init-users-roles.sql:/tmp/init-users-roles.sql
+      - ./data-base/sql-scripts/insert-user-roles.sql:/tmp/insert-user-roles.sql
+      - ./data-base/init-database.sh:/tmp/init-database.sh
+    command: /bin/bash ./tmp/init-database.sh
+    networks:
+      - elastic
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mssqltools
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=https://+:5001;http://+:5000
+      - ASPNETCORE_HTTPS_PORT=5001
+    volumes:
+      - ./webapi/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    restart: always
+    networks:
+      - elastic
+networks:
+  elastic:
+    driver: bridge
