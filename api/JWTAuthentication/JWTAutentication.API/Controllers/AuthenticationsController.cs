@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JWTAuthentication.API.Controllers
 {
-    [
+
     public class AuthenticationsController(IAuthenticationService service) : Controller
     {
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)

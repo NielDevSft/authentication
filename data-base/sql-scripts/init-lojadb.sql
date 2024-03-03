@@ -1,13 +1,13 @@
 USE [master]
 GO
 
-IF DB_ID('DBLoja') IS NOT NULL
+IF DB_ID('DBAuthentication') IS NOT NULL
   set noexec on 
 
-CREATE DATABASE [DBLoja];
+CREATE DATABASE [DBAuthentication];
 GO
 
-USE [DBLoja]
+USE [DBAuthentication]
 GO
 
 SET ANSI_NULLS ON
@@ -27,11 +27,11 @@ GO
 EXEC sp_addrolemember N'db_owner', N'migrator'
 GO
 
-CREATE LOGIN [AdmLoja] WITH PASSWORD = 'LojaSenha@247'
+CREATE LOGIN [AdmAuthentication] WITH PASSWORD = 'AuthCation@247'
 GO
 
-CREATE USER [AdmLoja] FOR LOGIN [AdmLoja] WITH DEFAULT_SCHEMA=[app]
+CREATE USER [AdmAuthentication] FOR LOGIN [AdmAuthentication] WITH DEFAULT_SCHEMA=[app]
 GO
 
-EXEC sp_addrolemember N'db_owner', N'AdmLoja'
+EXEC sp_addrolemember N'db_owner', N'AdmAuthentication'
 GO
