@@ -7,7 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JWTAutentication.Domain\JWTAuthentication.Domain.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JWTAuthentication.Domain\JWTAuthentication.Domain.csproj" />
   </ItemGroup>
 
 </Project>

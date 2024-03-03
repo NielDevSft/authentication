@@ -1,6 +1,6 @@
 ﻿using JWTAuthentication.Application.Abstractions;
-using JWTAuthentication.Domain.Authenticatios;
-using JWTAuthentication.Domain.Authenticatios.Services;
+using JWTAuthentication.Domain.Authentications;
+using JWTAuthentication.Domain.Authentications.Services;
 using JWTAuthentication.Domain.Usuarios.JwsClaims.Roles.UsuariosRole.Repository;
 using JWTAuthentication.Domain.Usuarios.Repository;
 
@@ -18,8 +18,7 @@ namespace JWTAuthentication.Application.Services
                 {
                     throw new ArgumentException(authentication
                         .ValidationResult
-                        .Errors
-                        .ToString()); ;
+                        .Errors.First().ToString()); ;
                 }
                 var user = (await usuarioRepository
                     .FindAllWhereAsync(x => x.Email == authentication.Email))

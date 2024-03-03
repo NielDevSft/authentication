@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<InvariantGlobalization>true</InvariantGlobalization>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\JWTAuthentication.Application\JWTAuthentication.Application.csproj" />
+		<ProjectReference Include="..\JWTAuthentication.Persistence\JWTAuthentication.Persistence.csproj" />
+	</ItemGroup>
+
+</Project>

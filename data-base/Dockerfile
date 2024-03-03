@@ -1,7 +1,7 @@
 
 FROM mcr.microsoft.com/mssql/server:2017-latest
 
-ENV SA_PASSWORD LojaSenha@247
+ENV SA_PASSWORD AuthCation@247
 ENV ACCEPT_EULA Y
 
 EXPOSE 1433

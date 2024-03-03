@@ -1,1 +1,1 @@
-/opt/mssql-tools/bin/sqlcmd -S sql-server -U sa -P LojaSenha@247 -d master -i /tmp/init-authentication-db.sql
+/opt/mssql-tools/bin/sqlcmd -S sql-server -U sa -P AuthCation@247 -d master -i /tmp/init-authentication-db.sql
