@@ -6,7 +6,7 @@ using JWTAuthentication.Persistence.Contexts;
 
 namespace JWTAuthentication.Persistence.Repositories
 {
-    public class UsuarioRoleRepository : Repository<UsuarioRole>, IUsuarioRoleRepository
+    public class UsuarioRoleRepository : Repository<RoleJwtClaim>, IRoleJwtClaimRepository
     {
         public UsuarioRoleRepository(AuthenticationOrganizationContext context) : base(context)
         {

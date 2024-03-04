@@ -2,7 +2,7 @@
 
 namespace JWTAuthentication.Domain.Usuarios.JwsClaims.Roles.UsuariosRole.Repository
 {
-    public interface IUsuarioRoleRepository : IRepository<UsuarioRole>
+    public interface IRoleJwtClaimRepository : IRepository<RoleJwtClaim>
     {
     }
 }

@@ -1,14 +1,7 @@
-﻿using JWTAuthentication.Domain.Core.Interfaces;
-using JWTAuthentication.Domain.Usuarios;
-using JWTAuthentication.Domain.Usuarios.JwsClaims.Roles.UsuariosRole.Repository;
+﻿using JWTAuthentication.Domain.Usuarios;
 using JWTAuthentication.Domain.Usuarios.Repository;
 using JWTAuthentication.Persistence.Abstractions;
 using JWTAuthentication.Persistence.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JWTAuthentication.Persistence.Repositories
 {

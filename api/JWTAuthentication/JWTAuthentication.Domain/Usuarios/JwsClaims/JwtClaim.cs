@@ -1,5 +1,6 @@
 ﻿using JWTAuthentication.Domain.Core.Models;
 using JWTAuthentication.Domain.Usuarios.JwsClaims.Roles;
+using JWTAuthentication.Domain.Usuarios.JwsClaims.Roles.UsuariosRole;
 
 namespace JWTAuthentication.Domain.Usuarios.JwsClaims
 {
@@ -7,7 +8,7 @@ namespace JWTAuthentication.Domain.Usuarios.JwsClaims
     {
         public string Subject { get; set; } = null!;
 
-        public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
+        public virtual ICollection<RoleJwtClaim> RoleJwtClaims { get; set; } = new List<RoleJwtClaim>();
         public override bool IsValid()
         {
             return true;

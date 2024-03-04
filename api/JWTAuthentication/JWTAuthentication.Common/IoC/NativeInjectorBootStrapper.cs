@@ -18,8 +18,6 @@ namespace JWTAuthentication.Common.IoC
             //smore about configuring Swagger/ OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
 
-
-
             //jwt
             services.AddAuthentication();
             services.ConfigureOptions<JwtOptionsSetup>();

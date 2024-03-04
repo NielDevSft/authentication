@@ -30,12 +30,12 @@ namespace JWTAuthentication.Persistence.Contexts
 
             modelBuilder.AddConfiguration(new DefaultMap<Usuario>());
             modelBuilder.AddConfiguration(new DefaultMap<Role>());
-            modelBuilder.AddConfiguration(new DefaultMap<UsuarioRole>());
+            modelBuilder.AddConfiguration(new DefaultMap<RoleJwtClaim>());
             modelBuilder.AddConfiguration(new DefaultMap<JwtClaim>());
 
             modelBuilder.Entity<Usuario>();
             modelBuilder.Entity<Role>();
-            modelBuilder.Entity<UsuarioRole>();
+            modelBuilder.Entity<RoleJwtClaim>();
             modelBuilder.Entity<JwtClaim>();
 
 

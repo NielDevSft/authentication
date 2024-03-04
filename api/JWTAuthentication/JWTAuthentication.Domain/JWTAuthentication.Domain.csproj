@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Usuarios\JwsClaims\Repository\" />
-    <Folder Include="Usuarios\JwsClaims\Roles\UsuariosRole\Service\" />
     <Folder Include="Usuarios\JwsClaims\Service\" />
   </ItemGroup>
 

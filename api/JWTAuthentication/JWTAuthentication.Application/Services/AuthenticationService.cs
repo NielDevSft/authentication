@@ -7,7 +7,7 @@ using JWTAuthentication.Domain.Usuarios.Repository;
 namespace JWTAuthentication.Application.Services
 {
     public class AuthenticationService(IUsuarioRepository usuarioRepository,
-        IUsuarioRoleRepository usuarioRoleRepository,
+        IRoleJwtClaimRepository roleJwtClaimRepository,
         IJWTProvider jwtProvider) : IAuthenticationService
     {
         public async Task<string> Login(Authentication authentication)
@@ -28,11 +28,11 @@ namespace JWTAuthentication.Application.Services
                     throw new ArgumentException("" +
                         "Usuário ou senha inválidos");
                 }
-                var userRoles = await usuarioRoleRepository
-                    .FindAllWhereAsync(ur => ur.UsuarioId == user.Id);
+                var roleClaims = await roleJwtClaimRepository
+                    .FindAllWhereAsync(ur => ur.JwtClaim!.Id == user.JwtClaimId);
 
                 string token = jwtProvider.GenerateToken(user,
-                    userRoles.Select(ur => ur.Role).ToList()!);
+                    roleClaims.Select(ur => ur.Role).ToList()!);
 
                 return token;
 

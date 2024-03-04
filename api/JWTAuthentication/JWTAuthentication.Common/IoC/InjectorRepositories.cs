@@ -10,7 +10,7 @@ namespace JWTAuthentication.Common.IoC
         public static void AddRepositories(IServiceCollection services)
         {
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            services.AddScoped<IUsuarioRoleRepository, UsuarioRoleRepository>();
+            services.AddScoped<IRoleJwtClaimRepository, UsuarioRoleRepository>();
             //services.AddScoped<IItemEstoqueRepository, ItemEstoqueRepository>();
             //services.AddScoped<IPedidoRepository, PedidoRepository>();
             //services.AddScoped<IItemPedidoRepository, ItemPedidoRepository>();

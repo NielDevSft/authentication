@@ -1,5 +1,5 @@
 ﻿using JWTAuthentication.Domain.Core.Models;
-using JWTAuthentication.Domain.Usuarios.JwsClaims.Roles.UsuariosRole;
+using JWTAuthentication.Domain.Usuarios.JwsClaims;
 
 namespace JWTAuthentication.Domain.Usuarios
 {
@@ -8,8 +8,8 @@ namespace JWTAuthentication.Domain.Usuarios
         public string Email { get; set; } = null!;
         public string PasswordHash { get; set; } = null!;
         public string Username { get; set; } = null!;
-
-        public virtual ICollection<UsuarioRole> UsuarioRoles { get; set; } = new List<UsuarioRole>();
+        public JwtClaim JwtClaims { get; set; }
+        public int? JwtClaimId { get; set; }
         public override bool IsValid()
         {
             return true;

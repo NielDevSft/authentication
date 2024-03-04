@@ -5,9 +5,8 @@ namespace JWTAuthentication.Domain.Usuarios.JwsClaims.Roles
 {
     public class Role : Entity<Role>
     {
-        public int? JwtClaimsId { get; set; }
         public string Name { get; set; } = null!;
-        public virtual ICollection<UsuarioRole> UserRoles { get; set; } = new List<UsuarioRole>();
+        public virtual ICollection<RoleJwtClaim> RoleJwtClaims { get; set; } = new List<RoleJwtClaim>();
         public override bool IsValid()
         {
             return true;

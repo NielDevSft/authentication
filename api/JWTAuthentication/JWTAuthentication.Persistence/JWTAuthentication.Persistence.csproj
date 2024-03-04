@@ -18,4 +18,8 @@
 	  <ProjectReference Include="..\JWTAuthentication.Domain\JWTAuthentication.Domain.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
+	</ItemGroup>
+
 </Project>
