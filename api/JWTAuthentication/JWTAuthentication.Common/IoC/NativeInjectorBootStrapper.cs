@@ -40,6 +40,7 @@ namespace JWTAuthentication.Common.IoC
         public static void RegisterApplication(IApplicationBuilder application)
         {
             application.UseAuthentication();
+            application.UseAuthorization();
 
             using (var serviceScope = application.ApplicationServices.CreateScope())
             {

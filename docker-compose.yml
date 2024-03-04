@@ -29,10 +29,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=https://+:5002;http://+:5000
+      - ASPNETCORE_HTTPS_PORT=5002
       - ASPNETCORE_Kestrel__Certificates__Default__Password=mypassword123
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/certificate.pfx
     volumes:
-      - ./certificate.pfx:/https/certificate.pfx:ro
+      - ./api/JWTAuthentication/certificate.pfx:/https/certificate.pfx:ro
     restart: always
     networks:
       - elastic
