@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JWTAuthentication.Common\JWTAuthentication.Common.csproj" />
-    <ProjectReference Include="..\JWTAuthentication.Persistence\JWTAuthentication.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

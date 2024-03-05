@@ -1,4 +1,4 @@
-﻿using JWTAuthentication.API.Dtos.Login;
+﻿using JWTAuthentication.API.Dtos.Logins;
 using JWTAuthentication.Domain.Authentications;
 using JWTAuthentication.Domain.Authentications.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +10,7 @@ namespace JWTAuthentication.API.Controllers
     public class AuthenticationsController(IAuthenticationService service) : Controller
     {
         [HttpPost(Name ="login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
+        public async Task<IActionResult> Login([FromBody] LoginDto loginRequest)
         {
             try
             {
