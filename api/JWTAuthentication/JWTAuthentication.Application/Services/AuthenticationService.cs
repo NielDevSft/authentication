@@ -1,16 +1,23 @@
 ﻿using JWTAuthentication.Application.Abstractions;
 using JWTAuthentication.Domain.Authentications;
+using JWTAuthentication.Domain.Authentications.Jwts;
 using JWTAuthentication.Domain.Authentications.Services;
-using JWTAuthentication.Domain.Usuarios.JwsClaims.Roles.UsuariosRole.Repository;
 using JWTAuthentication.Domain.Usuarios.Repository;
+using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims.Repository;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace JWTAuthentication.Application.Services
 {
     public class AuthenticationService(IUsuarioRepository usuarioRepository,
         IRoleJwtClaimRepository roleJwtClaimRepository,
-        IJWTProvider jwtProvider) : IAuthenticationService
+        IJWTProvider jwtProvider) : IAuthenticationJwtService
     {
-        public async Task<string> Login(Authentication authentication)
+        public async Task<JwtAuthResult> Login(Authentication authentication)
         {
             try
             {
@@ -29,10 +36,22 @@ namespace JWTAuthentication.Application.Services
                         "Usuário ou senha inválidos");
                 }
                 var roleClaims = await roleJwtClaimRepository
-                    .FindAllWhereAsync(ur => ur.JwtClaim!.Id == user.JwtClaimId);
+                    .FindAllWhereAsync(ur => ur.JwtClaim!.Id == user.JwtClaimId, "Role", "JwtClaim");
 
-                string token = jwtProvider.GenerateToken(user,
-                    roleClaims.Select(ur => ur.Role).ToList()!);
+                var roles = roleClaims
+                    .Select(ur => ur.Role);
+                var rolesTxt = roles.Select(r => r.Name).First();
+
+                var claims = new List<Claim>() {
+                            new Claim(ClaimTypes.Name ,user.Username),
+                            new Claim(ClaimTypes.Email ,user.Email),
+                            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
+                };
+                claims.AddRange(roles
+                    .Select(r => new Claim(ClaimTypes.Role, r.Name)));
+
+                var token = jwtProvider.GenerateTokens(user.Username,
+                   claims.ToArray(), DateTime.UtcNow);
 
                 return token;
 
@@ -47,5 +66,15 @@ namespace JWTAuthentication.Application.Services
             }
         }
 
+        public async Task Logout(string userName)
+        {
+            jwtProvider.RemoveRefreshTokenByUserName(userName);
+        }
+
+        public async Task<JwtAuthResult> RefreshToken(string refreshToken, string accessToken)
+        {
+            var jwtResult = jwtProvider.Refresh(refreshToken, accessToken, DateTime.UtcNow);
+            return jwtResult;
+        }
     }
 }

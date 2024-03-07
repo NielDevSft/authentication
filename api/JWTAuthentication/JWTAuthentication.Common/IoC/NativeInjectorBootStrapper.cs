@@ -1,10 +1,13 @@
-﻿using JWTAuthentication.Application.SetupOptions;
+﻿using JWTAuthentication.Application.Authentications;
+using JWTAuthentication.Application.SetupOptions;
 using JWTAuthentication.Persistence.Contexts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System.Globalization;
 
 
@@ -15,21 +18,22 @@ namespace JWTAuthentication.Common.IoC
         public static void RegisterServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddControllers();
-            //smore about configuring Swagger/ OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            services.AddEndpointsApiExplorer();
-
             //jwt
-            services.AddAuthentication();
+            var jwtTokenConfig = configuration.GetSection("JwtConfig").Get<JwtOptions>()!;
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer();
             services.ConfigureOptions<JwtOptionsSetup>();
             services.ConfigureOptions<JwtBeareOptionsSetup>();
-
-
 
             // Repositories
             InjectorRepositories.AddRepositories(services);
 
             //Services Bussines
-            InjectorServices.AddServices(services);
+            InjectorServices.AddServices(services, configuration);
 
             services.AddDbContext<AuthenticationOrganizationContext>(options =>
             {
@@ -41,7 +45,8 @@ namespace JWTAuthentication.Common.IoC
         {
             application.UseAuthentication();
             application.UseAuthorization();
-
+            application.UseRouting();
+            application.UseHttpsRedirection();
             using (var serviceScope = application.ApplicationServices.CreateScope())
             {
                 try
@@ -60,7 +65,7 @@ namespace JWTAuthentication.Common.IoC
                     }
                 }
             }
-            
+
 
 
         }

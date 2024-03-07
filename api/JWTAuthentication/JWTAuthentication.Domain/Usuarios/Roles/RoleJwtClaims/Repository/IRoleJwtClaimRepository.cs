@@ -1,6 +1,6 @@
 ﻿using JWTAuthentication.Domain.Core.Interfaces;
 
-namespace JWTAuthentication.Domain.Usuarios.JwsClaims.Roles.UsuariosRole.Repository
+namespace JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims.Repository
 {
     public interface IRoleJwtClaimRepository : IRepository<RoleJwtClaim>
     {

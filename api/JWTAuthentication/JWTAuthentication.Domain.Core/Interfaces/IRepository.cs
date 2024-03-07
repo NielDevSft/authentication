@@ -9,12 +9,13 @@ namespace JWTAuthentication.Domain.Core.Interfaces
 
         void Update(TEntity obj);
         TEntity? FirstOrDefault(Expression<Func<TEntity, bool>> predicate, params string[] includes);
-        IEnumerable<TEntity> FindAll(params string[] includes);
-        IEnumerable<TEntity> FindAllWhere(Expression<Func<TEntity, bool>> predicate, params string[] includes);
-        Task<IEnumerable<TEntity>> FindAllWhereAsync(Expression<Func<TEntity, bool>> predicate, params string[] includes);
-        TEntity? GetById(int id, params string[] includes);
+        ICollection<TEntity> FindAll(params string[] includes);
+        ICollection<TEntity> FindAllWhere(Expression<Func<TEntity, bool>> predicate, params string[] includes);
         void Remove(int id);
         int SaveChanges();
+        TEntity? GetById(int id, params string[] includes);
+        Task<TEntity?> GetByIdAsync(int id, params string[] includes);
+        Task<ICollection<TEntity>> FindAllWhereAsync(Expression<Func<TEntity, bool>> predicate, params string[] includes);
     }
 }
 

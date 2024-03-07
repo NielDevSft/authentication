@@ -1,6 +1,8 @@
-﻿using JWTAuthentication.API.Dtos.Usuarios;
+﻿using JWTAuthentication.API.Dtos.Roles;
+using JWTAuthentication.API.Dtos.Usuarios;
 using JWTAuthentication.Domain.Usuarios;
 using JWTAuthentication.Domain.Usuarios.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JWTAuthentication.API.Controllers
@@ -8,27 +10,29 @@ namespace JWTAuthentication.API.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController(IUsuarioService usuarioService) : Controller
+    public class UsuariosController(IUsuarioService usuarioService, ILogger<UsuariosController> logger) : ControllerBase
     {
         // GET: UsuariosController
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UsuarioDto>>> Index()
+        [Authorize]
+        public async Task<ActionResult<ICollection<UsuarioDto>>> Index()
         {
             try
             {
-
                 var usuarioList = await usuarioService.GetAll();
                 return Ok(usuarioList.Select(u =>
                 new UsuarioDto(
                 u.Email,
                 u.Username,
                 u.PasswordHash,
+                null,
                 u.Id,
                 u.CreateAt,
                 u.UpdateAt)));
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
 
@@ -47,6 +51,7 @@ namespace JWTAuthentication.API.Controllers
                 usuarioExisting.Email,
                     usuarioExisting.Username,
                     usuarioExisting.PasswordHash,
+                    null,
                     usuarioExisting.Id,
                     usuarioExisting.CreateAt,
                     usuarioExisting.UpdateAt
@@ -54,7 +59,8 @@ namespace JWTAuthentication.API.Controllers
             }
             catch (Exception ex)
             {
-                BadRequest(ex.Message);
+                logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
             }
             return Ok(usuario);
         }
@@ -78,15 +84,43 @@ namespace JWTAuthentication.API.Controllers
                     CreateAt = usuarioCreated.CreateAt,
                     UpdateAt = usuarioCreated.UpdateAt,
                 };
-
             }
             catch (Exception ex)
             {
-                BadRequest(ex.Message);
+                logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
             }
             return Created("success", usuarioDto);
         }
 
+
+        [HttpPost("set-role-list")]
+        public async Task<ActionResult<UsuarioDto>> SetRoleList([FromBody] SetRoleListDto setRoleListDto)
+        {
+            UsuarioDto usuarioDto = null;
+            try
+            {
+                var usuarioCreated = await usuarioService.SetRoleList(setRoleListDto.id, setRoleListDto.roles.ToList());
+                usuarioDto = new UsuarioDto(usuarioCreated.Email,
+                    usuarioCreated.Username,
+                    usuarioCreated.PasswordHash,
+                    usuarioCreated
+                    .JwtClaims
+                    .RoleJwtClaims.Select(c => c.Role)
+                    .Select(r => new RoleDto(r!.Id, r.Name, r.CreateAt, r.UpdateAt))
+                    .ToList(),
+                    usuarioCreated.Id,
+                    usuarioCreated.CreateAt,
+                    usuarioCreated.UpdateAt);
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
+            }
+            return Created("success", usuarioDto);
+        }
         //// POST: UsuariosController/Create
         //[HttpPost]
         //[ValidateAntiForgeryToken]

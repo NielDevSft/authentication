@@ -1,6 +1,5 @@
 ﻿using JWTAuthentication.Domain.Core.Models;
-using JWTAuthentication.Domain.Usuarios.JwsClaims.Roles;
-using JWTAuthentication.Domain.Usuarios.JwsClaims.Roles.UsuariosRole;
+using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims;
 
 namespace JWTAuthentication.Domain.Usuarios.JwsClaims
 {

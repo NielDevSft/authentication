@@ -1,7 +1,7 @@
 ﻿using JWTAuthentication.Domain.Usuarios;
 using JWTAuthentication.Domain.Usuarios.JwsClaims;
-using JWTAuthentication.Domain.Usuarios.JwsClaims.Roles;
-using JWTAuthentication.Domain.Usuarios.JwsClaims.Roles.UsuariosRole;
+using JWTAuthentication.Domain.Usuarios.Roles;
+using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims;
 using JWTAuthentication.Persistence.Extentions;
 using JWTAuthentication.Persistence.Mapping;
 using Microsoft.EntityFrameworkCore;

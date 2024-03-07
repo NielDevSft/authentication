@@ -1,6 +1,7 @@
 ﻿using JWTAuthentication.Domain.Core.Models;
+using JWTAuthentication.Domain.Usuarios.JwsClaims;
 
-namespace JWTAuthentication.Domain.Usuarios.JwsClaims.Roles.UsuariosRole
+namespace JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims
 {
 
     public class RoleJwtClaim : Entity<RoleJwtClaim>
