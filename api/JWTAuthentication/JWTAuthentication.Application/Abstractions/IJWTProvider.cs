@@ -1,6 +1,4 @@
 ﻿using JWTAuthentication.Domain.Authentications.Jwts;
-using JWTAuthentication.Domain.Usuarios;
-using JWTAuthentication.Domain.Usuarios.Roles;
 using System.Collections.Immutable;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

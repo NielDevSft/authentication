@@ -1,10 +1,6 @@
 ﻿using JWTAuthentication.API.Dtos.Roles;
-using JWTAuthentication.API.Dtos.Usuarios;
-using JWTAuthentication.Application.Services;
-using JWTAuthentication.Domain.Usuarios;
 using JWTAuthentication.Domain.Usuarios.Roles;
 using JWTAuthentication.Domain.Usuarios.Roles.Service;
-using JWTAuthentication.Domain.Usuarios.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JWTAuthentication.API.Controllers
@@ -64,7 +60,9 @@ namespace JWTAuthentication.API.Controllers
             {
                 await roleService.Delete(id);
                 return Ok();
-            }catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }

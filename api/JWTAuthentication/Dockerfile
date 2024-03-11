@@ -15,6 +15,7 @@ COPY ./JWTAuthentication.Domain/*.csproj JWTAuthentication.Domain/
 COPY ./JWTAuthentication.Domain.Core/*.csproj JWTAuthentication.Domain.Core/
 COPY ./JWTAuthentication.Persistence/*.csproj JWTAuthentication.Persistence/
 COPY ./JWTAuthentication.Application/*.csproj JWTAuthentication.Application/
+COPY ./JWTAuthentication.Application.Test/*.csproj JWTAuthentication.Application.Test/
 RUN dotnet restore 
 COPY . .
 

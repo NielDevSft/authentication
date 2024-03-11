@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace JWTAuthentication.Domain.Authentications.Jwts
+﻿namespace JWTAuthentication.Domain.Authentications.Jwts
 {
     public class RefreshToken()
     {

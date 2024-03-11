@@ -6,10 +6,14 @@ using Microsoft.Extensions.Logging;
 
 namespace JWTAuthentication.Persistence.Repositories
 {
-    public class UsuarioRepository : Repository<Usuario>, IUsuarioRepository
+    public class UsuarioRepository
+        : Repository<Usuario>, IUsuarioRepository
     {
-        public UsuarioRepository(AuthenticationOrganizationContext context, ILogger<RoleRepository> logger) : base(context, logger)
+        private readonly ILogger<Repository<Usuario>> _logger;
+
+        public UsuarioRepository(AuthenticationOrganizationContext context, ILogger<Repository<Usuario>> logger) : base(context, logger)
         {
+            _logger = logger;
         }
 
         public bool TryGetValue(string username, string password)

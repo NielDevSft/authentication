@@ -4,10 +4,6 @@ using JWTAuthentication.Domain.Authentications.Jwts;
 using JWTAuthentication.Domain.Authentications.Services;
 using JWTAuthentication.Domain.Usuarios.Repository;
 using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims.Repository;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 

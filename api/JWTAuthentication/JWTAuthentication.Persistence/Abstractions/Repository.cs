@@ -1,7 +1,5 @@
 ﻿using JWTAuthentication.Domain.Core.Interfaces;
 using JWTAuthentication.Domain.Core.Models;
-using JWTAuthentication.Persistence.Contexts;
-using JWTAuthentication.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Data;
@@ -11,21 +9,21 @@ namespace JWTAuthentication.Persistence.Abstractions
 {
     public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity<TEntity>
     {
-        protected AuthenticationOrganizationContext Db;
+        protected DbContext Db;
         protected DbSet<TEntity> DbSet;
-        private AuthenticationOrganizationContext context;
-        private readonly ILogger<RoleRepository> _logger;
+        private DbContext _context;
+        private readonly ILogger<Repository<TEntity>> _logger;
 
-        public Repository(AuthenticationOrganizationContext context, ILogger<RoleRepository> logger)
+        public Repository(DbContext context, ILogger<Repository<TEntity>> logger)
         {
             Db = context;
             DbSet = Db.Set<TEntity>();
             _logger = logger;
         }
 
-        protected Repository(AuthenticationOrganizationContext context)
+        protected Repository(DbContext context)
         {
-            this.context = context;
+            this._context = context;
         }
 
         public void Add(TEntity obj)

@@ -8,8 +8,9 @@ namespace JWTAuthentication.Persistence.Repositories
 {
     public class JwtClaimRepository : Repository<JwtClaim>, IJwtClaimRepository
     {
-        public JwtClaimRepository(AuthenticationOrganizationContext context, ILogger<RoleRepository> logger) : base(context, logger)
+        public JwtClaimRepository(AuthenticationOrganizationContext context, ILogger<Repository<JwtClaim>> logger) : base(context, logger)
         {
+
         }
     }
 }

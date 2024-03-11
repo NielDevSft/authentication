@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWTAuthentication.Common", "JWTAuthentication.Common\JWTAuthentication.Common.csproj", "{2368A95A-FAEC-47AF-956C-773E54024C95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWTAuthentication.Common", "JWTAuthentication.Common\JWTAuthentication.Common.csproj", "{2368A95A-FAEC-47AF-956C-773E54024C95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWTAuthentication.Domain", "JWTAuthentication.Domain\JWTAuthentication.Domain.csproj", "{9FF80EED-EB6E-4A97-B5BE-3917555876A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWTAuthentication.Domain", "JWTAuthentication.Domain\JWTAuthentication.Domain.csproj", "{9FF80EED-EB6E-4A97-B5BE-3917555876A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWTAuthentication.Domain.Core", "JWTAuthentication.Domain.Core\JWTAuthentication.Domain.Core.csproj", "{495880F6-4466-4DCA-97BC-4E72C2E21EED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWTAuthentication.Domain.Core", "JWTAuthentication.Domain.Core\JWTAuthentication.Domain.Core.csproj", "{495880F6-4466-4DCA-97BC-4E72C2E21EED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWTAuthentication.Persistence", "JWTAuthentication.Persistence\JWTAuthentication.Persistence.csproj", "{128F67C8-DA46-4E1E-9C9D-C3111B96AB25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWTAuthentication.Persistence", "JWTAuthentication.Persistence\JWTAuthentication.Persistence.csproj", "{128F67C8-DA46-4E1E-9C9D-C3111B96AB25}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1-Presentation", "1-Presentation", "{0C21E4CA-31C4-47EA-A525-28890A75D0A3}"
 EndProject
@@ -19,11 +19,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4-Infrastructure", "4-Infra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5-Common", "5-Common", "{61D72DCE-080D-4C37-BAA9-767FA4BD5E66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWTAuthentication.API", "JWTAuthentication.API\JWTAuthentication.API.csproj", "{F87A749F-981D-48E3-9923-5E717846B1F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWTAuthentication.API", "JWTAuthentication.API\JWTAuthentication.API.csproj", "{F87A749F-981D-48E3-9923-5E717846B1F0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2-Application", "2-Application", "{D9C5E65C-319C-4652-99BA-04C55416C399}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWTAuthentication.Application", "JWTAuthentication.Application\JWTAuthentication.Application.csproj", "{6F2C6510-F938-41A2-B559-DE4EDBA7A6B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWTAuthentication.Application", "JWTAuthentication.Application\JWTAuthentication.Application.csproj", "{6F2C6510-F938-41A2-B559-DE4EDBA7A6B4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6-Test", "6-Test", "{C4A3B462-BA7E-4827-B162-784CCEF03AF0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWTAuthentication.Application.Test", "JWTAuthentication.Application.Test\JWTAuthentication.Application.Test.csproj", "{91F68391-F612-4B90-B845-9FF642F4FF9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +59,10 @@ Global
 		{6F2C6510-F938-41A2-B559-DE4EDBA7A6B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F2C6510-F938-41A2-B559-DE4EDBA7A6B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F2C6510-F938-41A2-B559-DE4EDBA7A6B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91F68391-F612-4B90-B845-9FF642F4FF9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91F68391-F612-4B90-B845-9FF642F4FF9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91F68391-F612-4B90-B845-9FF642F4FF9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91F68391-F612-4B90-B845-9FF642F4FF9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +74,7 @@ Global
 		{128F67C8-DA46-4E1E-9C9D-C3111B96AB25} = {B8C0E71C-9279-47A9-9BD0-2CA21248C7C7}
 		{F87A749F-981D-48E3-9923-5E717846B1F0} = {0C21E4CA-31C4-47EA-A525-28890A75D0A3}
 		{6F2C6510-F938-41A2-B559-DE4EDBA7A6B4} = {D9C5E65C-319C-4652-99BA-04C55416C399}
+		{91F68391-F612-4B90-B845-9FF642F4FF9A} = {C4A3B462-BA7E-4827-B162-784CCEF03AF0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {56F09475-A3B3-4E6C-A8C5-DE43C253954F}

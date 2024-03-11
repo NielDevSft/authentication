@@ -1,7 +1,7 @@
 ﻿using JWTAuthentication.Application.Abstractions;
 using Microsoft.Extensions.Hosting;
 
-namespace EmpresaAPI.Infrastructure;
+namespace JWTAuthentication.Application.Authentications;
 
 public class JwtRefreshTokenCache(IJWTProvider jwtAuthManager) : IHostedService, IDisposable
 {

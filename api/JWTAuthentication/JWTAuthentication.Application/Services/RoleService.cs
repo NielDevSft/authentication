@@ -1,12 +1,6 @@
-﻿using JWTAuthentication.Domain.Usuarios;
-using JWTAuthentication.Domain.Usuarios.Roles;
+﻿using JWTAuthentication.Domain.Usuarios.Roles;
 using JWTAuthentication.Domain.Usuarios.Roles.Repository;
 using JWTAuthentication.Domain.Usuarios.Roles.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JWTAuthentication.Application.Services
 {
