@@ -7,6 +7,7 @@ using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims;
 using JWTAuthentication.Domain.Usuarios.Service;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System;
 
 namespace JWTAuthentication.Application.Services
 {
@@ -41,13 +42,15 @@ namespace JWTAuthentication.Application.Services
         public async Task Delete(int id)
         {
             try
-            {
-                usuarioRepository.Remove(id);
+            {   
+                
+                usuarioRepository.Remove(await GetById(id));
                 usuarioRepository.SaveChanges();
 
             }
             catch (Exception ex)
             {
+                
                 throw ex;
             }
             finally
@@ -62,11 +65,11 @@ namespace JWTAuthentication.Application.Services
             var usuairoList = new List<Usuario>();
             try
             {
-                usuairoList.AddRange(usuarioRepository.FindAllWhere(i => !i.Removed));
+                usuairoList.AddRange(await usuarioRepository.FindAllWhereAsync(i => !i.Removed));
             }
             catch (Exception ex)
             {
-                throw ex;
+                return usuairoList;
             }
             finally
             {
@@ -141,13 +144,9 @@ namespace JWTAuthentication.Application.Services
                 throw new ArgumentException("Usuário não encontrado");
             }
 
-
-
             usuarioRepository.Update(usuario);
             usuarioRepository.SaveChanges();
             return usuario;
-
-
         }
 
         public async Task<Usuario> Update(int id, Usuario usuario)

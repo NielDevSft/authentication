@@ -12,6 +12,7 @@ namespace JWTAuthentication.Persistence.Repositories
 
         public RoleRepository(AuthenticationOrganizationContext context, ILogger<RoleRepository> logger) : base(context, logger)
         {
+            _logger = logger;
         }
 
         public async Task<ICollection<Role>> GetManyAllRolesByIdAsync(ICollection<int> ids)

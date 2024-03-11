@@ -151,5 +151,14 @@ namespace JWTAuthentication.Persistence.Abstractions
             _logger.LogInformation($"{this.GetType().BaseType}, id {id} obtido");
             return query.FirstOrDefault();
         }
+
+        public void Remove(TEntity obj)
+        {
+            if (obj! != null!)
+            {
+                obj!.Removed = true;
+                Update(obj);
+            }
+        }
     }
 }

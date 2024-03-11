@@ -3,6 +3,7 @@ using JWTAuthentication.Application.Services;
 using JWTAuthentication.Application.Test.Contexts;
 using JWTAuthentication.Application.Test.Repositories;
 using JWTAuthentication.Application.Test.Utils;
+using JWTAuthentication.Application.Test.Utils.Factory;
 using JWTAuthentication.Domain.Usuarios;
 using JWTAuthentication.Domain.Usuarios.JwsClaims;
 using JWTAuthentication.Domain.Usuarios.Roles;
@@ -10,22 +11,23 @@ using JWTAuthentication.Persistence.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.EntityFrameworkCore;
+using System.Linq;
 
 
 namespace JWTAuthentication.Application.Test
 {
     public class UsuarioServiceTests
     {
-        private static readonly Fixture Fixture = new Fixture();
+        private static readonly Fixture fixture = new Fixture();
 
         [Fact]
         public async void Create_ValidInput_ShouldCreate()
         {
-            var usuarios = GenerateUsuarios();
-            var roles = GenerateRoles();
+            var usuarios = GenerateFakeData.Usuarios(fixture, 4);
+            var roles = GenerateFakeData.Roles(fixture, 4);
 
             var initalCount = usuarios.Count();
-            UsuarioService usuarioService = UsuarioServiceFactory(usuarios, roles);
+            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
 
             // prepare
             var usuario = new Usuario()
@@ -45,9 +47,9 @@ namespace JWTAuthentication.Application.Test
         [Fact]
         public async void Create_InvalidEmailAndPassword_ShouldThrow()
         {
-            var usuarios = GenerateUsuarios();
-            var roles = GenerateRoles();
-            UsuarioService usuarioService = UsuarioServiceFactory(usuarios, roles);
+            var usuarios = GenerateFakeData.Usuarios(fixture, 4);
+            var roles = GenerateFakeData.Roles(fixture, 4);
+            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
             // prepare
             var usuario = new Usuario()
             {
@@ -64,58 +66,96 @@ namespace JWTAuthentication.Application.Test
         [Fact]
         public async void GetAll_NoParams_ReturnAll()
         {
-            var usuarios = GenerateUsuarios();
-            var roles = GenerateRoles();
-            UsuarioService usuarioService = UsuarioServiceFactory(usuarios, roles);
+            var usuarios = GenerateFakeData.Usuarios(fixture, 4);
+            var roles = GenerateFakeData.Roles(fixture, 4);
+            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
 
             var usuariosObtidos = await usuarioService.GetAll();
 
             Assert.Equal(usuarios.Count, usuariosObtidos.Count);
         }
-
-        private static UsuarioService UsuarioServiceFactory(IList<Usuario> usuarios, IList<Role> roles)
+        [Fact]
+        public async void GetById_OutRangeId_ShouldThrows()
         {
-            //criação db context e adição dos db sets
-            var usuarioDbContext = new Mock<AuthenticationOrganizationContextTest>();
-            var roleDbContext = new Mock<AuthenticationOrganizationContextTest>();
-
-            usuarioDbContext.Setup(udc => udc.Usuarios).ReturnsDbSet(usuarios);
-            roleDbContext.Setup(udc => udc.Roles).ReturnsDbSet(roles);
-
-            //criação dos repositórios
-            var usuarioRepositorio = new UsuarioRepositoryTest(usuarioDbContext.Object,
-                new Mock<ILogger<UsuarioRepository>>().Object);
-
-
-            var roleRepositorio = new RoleRepositoryTest(roleDbContext.Object,
-                new Mock<ILogger<RoleRepository>>().Object);
-
-            return new UsuarioService(usuarioRepositorio, roleRepositorio);
+            //prepare
+            var usuarios = GenerateFakeData.Usuarios(fixture, 1);
+            var roles = GenerateFakeData.Roles(fixture, 1);
+            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
+            //execute
+            var error = await Assert.ThrowsAsync<Exception>(() => usuarioService.GetById(5));
+            //asserts
+            Assert.Equal("Item não encontrado", error.Message);
         }
-        private static IList<Usuario> GenerateUsuarios()
+        [Fact]
+        public async void Update_ValidInput_RetrunNewUpdateAt()
         {
+            //prepare
+            var usuarios = GenerateFakeData.Usuarios(fixture, 1);
+            var roles = GenerateFakeData.Roles(fixture, 1);
+            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
+            var usuario = usuarios.First();
+            var prenultimaAtualizacao = usuario.UpdateAt;
+            usuario.Username = "Usuário atualizado";
 
-            var users = new List<Usuario>
-            {
-                Fixture.Build<Usuario>().With(u => u.JwtClaims , new JwtClaim()).Create(),
-                Fixture.Build<Usuario>().With(u => u.JwtClaims , new JwtClaim()).Create(),
-                Fixture.Build<Usuario>().With(u => u.JwtClaims , new JwtClaim()).Create(),
-                Fixture.Build<Usuario>().With(u => u.JwtClaims , new JwtClaim()).Create(),
-            };
+            //execute
+            var usuarioAtualizado = await usuarioService.Update(usuario.Id, usuario);
 
-            return users;
+            //asserts
+            Assert.True(usuarioAtualizado is
+            { Username: "Usuário atualizado" });
+            Assert.NotEqual(prenultimaAtualizacao, usuarioAtualizado.UpdateAt);
+            Assert.Equal(usuarioAtualizado.CreateAt, usuario.CreateAt);
+
         }
-        private static IList<Role> GenerateRoles()
+        [Fact]
+        public async void Delete_ValidInput_ShouldDelete()
         {
+            //prepare
+            var usuarios = GenerateFakeData.Usuarios(fixture, 1);
+            var roles = GenerateFakeData.Roles(fixture, 1);
+            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
+            var usuario = usuarios.First();
 
-            var roles = new List<Role>
-            {
-                Fixture.Build<Role>().With(u => u.RoleJwtClaims , []).Create(),
-                Fixture.Build<Role>().With(u => u.RoleJwtClaims , []).Create(),
+            //execute
+            await usuarioService.Delete(usuario.Id);
 
-            };
+            var usuariosExisting = (await usuarioService.GetAll());
 
-            return roles;
+            //asserts
+            Assert.True(usuariosExisting.Count().Equals(0));
+        }
+        [Fact]
+        public async void Delete_InvalidInput_ShouldThrows()
+        {
+            //prepare
+            var usuarios = GenerateFakeData.Usuarios(fixture, 1);
+            var roles = GenerateFakeData.Roles(fixture, 1);
+            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
+
+            //execute
+            var error = await Assert.ThrowsAsync<Exception>(() => usuarioService.Delete(-5));
+
+            //asserts
+            Assert.Equal("Item não encontrado", error.Message);
+        }
+        [Fact]
+        public async void SetRoleList_ValidInput_ReturnsUsuarioWithRoles()
+        {
+            //prepare
+            var usuarios = GenerateFakeData.Usuarios(fixture, 1);
+            var roles = GenerateFakeData.Roles(fixture, 3);
+            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
+
+            var rolesListOnlyIds = roles.Select(r => r.Id).ToList();
+
+            //execute
+            var usuarioWithRoles = await usuarioService.SetRoleList(usuarios.First().Id, rolesListOnlyIds);
+
+            //assertis
+            Assert.Equal(3, usuarioWithRoles.JwtClaims.Subject.Split("|").Count());
+            
+            Assert.Contains(usuarioWithRoles.JwtClaims.Subject.Split("|").First().Trim(), roles.Select(r => r.Name));
+
         }
     }
 }
