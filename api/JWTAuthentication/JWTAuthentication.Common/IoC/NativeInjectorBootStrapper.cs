@@ -28,6 +28,7 @@ namespace JWTAuthentication.Common.IoC
             services.ConfigureOptions<JwtOptionsSetup>();
             services.ConfigureOptions<JwtBeareOptionsSetup>();
 
+
             // Repositories
             InjectorRepositories.AddRepositories(services);
 

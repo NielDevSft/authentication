@@ -1,9 +1,14 @@
+using EmpresaAPI.Configurations;
 using JWTAuthentication.Common.IoC;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = LoggingConfiguration.GetConfiguration(builder.Configuration);
+builder.Host.UseSerilog();
 
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
@@ -14,7 +19,9 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(1);
 });
 
+
 NativeInjectorBootStrapper.RegisterServices(builder.Services, builder.Configuration);
+
 
 builder.Services.AddSwaggerGen(c =>
 {
