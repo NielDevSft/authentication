@@ -4,17 +4,21 @@ using JWTAuthentication.Domain.Usuarios.Repository;
 using JWTAuthentication.Domain.Usuarios.Roles;
 using JWTAuthentication.Domain.Usuarios.Roles.Repository;
 using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims;
+using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims.Repository;
 using JWTAuthentication.Domain.Usuarios.Service;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace JWTAuthentication.Application.Services
 {
     public class UsuarioService(IUsuarioRepository usuarioRepository,
-        IRoleRepository roleRepository) : IUsuarioService
+        IRoleRepository roleRepository, IRoleJwtClaimRepository roleJwtClaimRepository) : IUsuarioService
     {
-        private Task<dynamic> usuario;
 
         public async Task<Usuario> Create(Usuario usuario)
         {
@@ -42,15 +46,15 @@ namespace JWTAuthentication.Application.Services
         public async Task Delete(int id)
         {
             try
-            {   
-                
+            {
+
                 usuarioRepository.Remove(await GetById(id));
                 usuarioRepository.SaveChanges();
 
             }
             catch (Exception ex)
             {
-                
+
                 throw ex;
             }
             finally
@@ -105,48 +109,67 @@ namespace JWTAuthentication.Application.Services
 
         public async Task<Usuario> SetRoleList(int id, ICollection<int> roleIdList)
         {
-
+            var roles = new List<Role>();
+            Usuario usuario = null;
             var usuarioTask = usuarioRepository.GetByIdAsync(id);
-            var rolesTask = roleRepository.GetManyAllRolesByIdAsync(roleIdList);
+            var rolesTask = roleRepository.FindAllWhereAsync(r => roleIdList.Contains(r.Id));
             var roleJwtClaim = new List<RoleJwtClaim>();
 
             await Task.WhenAll(usuarioTask, rolesTask);
-            var roles = new List<Role>();
+
             roles.AddRange(rolesTask.Result);
-            var usuario = usuarioTask.Result;
+            usuario = usuarioTask.Result!;
 
             if (roles.IsNullOrEmpty())
             {
                 throw new ArgumentException("Uma ou mais roles não encontradas");
             }
-            roles = roles.ToList();
-            if (usuario is { Removed: false, Active: true })
-            {
-                var subject = roles.First().Name;
-                roles.Remove(roles.First());
-                roles.Select(r => r.Name).ToList().ForEach(n => subject += $"|{n}");
-                usuario.JwtClaims = new JwtClaim()
-                {
-                    Subject = subject,
-                };
-
-                roles.ToList().ForEach(r =>
-                {
-                    usuario.JwtClaims.RoleJwtClaims.Add(new RoleJwtClaim()
-                    {
-                        RoleId = r.Id,
-                        Role = r,
-                    });
-                });
-            }
-            else
+            if (usuario == null!)
             {
                 throw new ArgumentException("Usuário não encontrado");
             }
+            try
+            {
+                JwtClaim claim = await roleJwtClaimRepository.FindRoleJwtClaimExisting(roles.ToList());
 
-            usuarioRepository.Update(usuario);
-            usuarioRepository.SaveChanges();
+                if (claim != null!)
+                {
+                    usuario.JwtClaimId = claim.Id;
+                    usuario.JwtClaims = claim;
+                    usuarioRepository.Update(usuario);
+                    return usuario;
+                }
+                usuario.JwtClaims = new JwtClaim()
+                {
+                    Subject = BuildSubjectClaim(roles.ToList())
+                };
+
+                usuario
+                    .JwtClaims
+                    .RoleJwtClaims = roles.Select(r => new RoleJwtClaim()
+                    {
+                        RoleId = r.Id,
+                        Role = r,
+                    }).ToList();
+                usuarioRepository.Update(usuario);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                usuarioRepository.SaveChanges();
+            }
             return usuario;
+        }
+
+        private static string BuildSubjectClaim(List<Role> roles)
+        {
+            var subject = roles.First().Name;
+            roles.Remove(roles.First());
+            roles.Select(r => r.Name).ToList().ForEach(n => subject += $"|{n}");
+            return subject;
         }
 
         public async Task<Usuario> Update(int id, Usuario usuario)
@@ -172,6 +195,8 @@ namespace JWTAuthentication.Application.Services
 
             return usuarioFound;
         }
+
+        
 
     }
 }

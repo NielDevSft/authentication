@@ -29,8 +29,12 @@ namespace JWTAuthentication.Application.Test.Utils.Factory
 
             var roleRepositorio = new RoleRepositoryTest(roleDbContext.Object,
                 new Mock<ILogger<RoleRepository>>().Object);
+            
+            var roleJwtClaimRepositorio = new RoleJwtClaimRepositoryTest(roleDbContext.Object,
+                new Mock<ILogger<RoleJwtClaimRepository>>().Object);
 
-            return new UsuarioService(usuarioRepositorio, roleRepositorio);
+
+            return new UsuarioService(usuarioRepositorio, roleRepositorio, roleJwtClaimRepositorio);
         }
 
         public static RoleService GetRoleService(IList<Role> roles)

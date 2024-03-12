@@ -1,18 +1,8 @@
 ﻿using AutoFixture;
 using JWTAuthentication.Application.Services;
-using JWTAuthentication.Application.Test.Contexts;
-using JWTAuthentication.Application.Test.Repositories;
 using JWTAuthentication.Application.Test.Utils;
 using JWTAuthentication.Application.Test.Utils.Factory;
 using JWTAuthentication.Domain.Usuarios;
-using JWTAuthentication.Domain.Usuarios.JwsClaims;
-using JWTAuthentication.Domain.Usuarios.Roles;
-using JWTAuthentication.Persistence.Repositories;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Moq.EntityFrameworkCore;
-using System.Linq;
-
 
 namespace JWTAuthentication.Application.Test
 {
@@ -155,7 +145,6 @@ namespace JWTAuthentication.Application.Test
             Assert.Equal(3, usuarioWithRoles.JwtClaims.Subject.Split("|").Count());
             
             Assert.Contains(usuarioWithRoles.JwtClaims.Subject.Split("|").First().Trim(), roles.Select(r => r.Name));
-
         }
     }
 }

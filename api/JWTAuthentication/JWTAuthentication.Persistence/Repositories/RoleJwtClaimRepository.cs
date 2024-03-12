@@ -1,4 +1,6 @@
-﻿using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims;
+﻿using JWTAuthentication.Domain.Usuarios.JwsClaims;
+using JWTAuthentication.Domain.Usuarios.Roles;
+using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims;
 using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims.Repository;
 using JWTAuthentication.Persistence.Abstractions;
 using JWTAuthentication.Persistence.Contexts;
@@ -10,6 +12,29 @@ namespace JWTAuthentication.Persistence.Repositories
     {
         public RoleJwtClaimRepository(AuthenticationOrganizationContext context, ILogger<RoleJwtClaimRepository> logger) : base(context, logger)
         {
+        }
+        public async Task<JwtClaim> FindRoleJwtClaimExisting(List<Role> roles)
+        {
+            try
+            {
+                var roleClaimContainers = await FindAllWhereAsync(rjc => roles.Contains(rjc.Role!), "Role", "JwtClaim");
+
+                var claimCounts = roleClaimContainers
+                .Select(container => container.JwtClaim!)
+                .GroupBy(claim => claim)
+                .ToDictionary(group => group.Key, group => group.Count());
+
+                var claimWithSameRoles = claimCounts.ToList().Find(cc => cc.Value == roles.Count).Key;
+
+                claimWithSameRoles.RoleJwtClaims = roleClaimContainers
+                    .ToList().FindAll(rc => rc.JwtClaimId == claimWithSameRoles.Id);
+
+                return claimWithSameRoles;
+            }
+            catch
+            {
+                return null!;
+            }
         }
     }
 }
