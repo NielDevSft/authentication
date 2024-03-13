@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using JWTAuthentication.Application.Services;
+using JWTAuthentication.Application.Test.Factory;
 using JWTAuthentication.Application.Test.Utils;
-using JWTAuthentication.Application.Test.Utils.Factory;
 using JWTAuthentication.Domain.Usuarios;
 
 namespace JWTAuthentication.Application.Test
@@ -16,7 +16,6 @@ namespace JWTAuthentication.Application.Test
             var usuarios = GenerateFakeData.Usuarios(fixture, 4);
             var roles = GenerateFakeData.Roles(fixture, 4);
 
-            var initalCount = usuarios.Count();
             UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
 
             // prepare
@@ -26,16 +25,14 @@ namespace JWTAuthentication.Application.Test
                 PasswordHash = HashCreator.Hash("admin123123"),
                 Email = "cezinha@vaivendo.com.br",
             };
-            // execure
+            // execute
             var usuarioCreated = await usuarioService.Create(usuario);
             //verify
             Assert.True(usuarioCreated is { Removed: false, Active: true });
         }
 
-
-
         [Fact]
-        public async void Create_InvalidEmailAndPassword_ShouldThrow()
+        public async void Create_InvalidInput_ShouldThrow()
         {
             var usuarios = GenerateFakeData.Usuarios(fixture, 4);
             var roles = GenerateFakeData.Roles(fixture, 4);
@@ -145,6 +142,7 @@ namespace JWTAuthentication.Application.Test
             Assert.Equal(3, usuarioWithRoles.JwtClaims.Subject.Split("|").Count());
             
             Assert.Contains(usuarioWithRoles.JwtClaims.Subject.Split("|").First().Trim(), roles.Select(r => r.Name));
+            Assert.Equal(usuarioWithRoles.JwtClaims.RoleJwtClaims.Count, roles.Count);
         }
     }
 }

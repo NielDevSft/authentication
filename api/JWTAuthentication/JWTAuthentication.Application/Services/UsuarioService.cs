@@ -47,7 +47,6 @@ namespace JWTAuthentication.Application.Services
         {
             try
             {
-
                 usuarioRepository.Remove(await GetById(id));
                 usuarioRepository.SaveChanges();
 
@@ -84,16 +83,17 @@ namespace JWTAuthentication.Application.Services
 
         public async Task<Usuario> GetById(int id)
         {
-            Usuario? usuarioFound = null;
+            
             try
             {
-                usuarioFound = usuarioRepository
+                var usuarioFound = usuarioRepository
                     .FirstOrDefault(i => i.Id == id && !i.Removed);
 
                 if (usuarioFound! == null)
                 {
                     throw new Exception("Item não encontrado");
                 }
+                return usuarioFound;
 
             }
             catch (Exception ex)
@@ -104,7 +104,7 @@ namespace JWTAuthentication.Application.Services
             {
                 usuarioRepository.Dispose();
             }
-            return usuarioFound;
+            
         }
 
         public async Task<Usuario> SetRoleList(int id, ICollection<int> roleIdList)

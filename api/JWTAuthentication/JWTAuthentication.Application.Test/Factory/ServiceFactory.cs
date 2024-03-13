@@ -9,7 +9,7 @@ using Moq;
 using Moq.EntityFrameworkCore;
 using System.Data;
 
-namespace JWTAuthentication.Application.Test.Utils.Factory
+namespace JWTAuthentication.Application.Test.Factory
 {
     public static class ServiceFactory
     {
@@ -29,7 +29,7 @@ namespace JWTAuthentication.Application.Test.Utils.Factory
 
             var roleRepositorio = new RoleRepositoryTest(roleDbContext.Object,
                 new Mock<ILogger<RoleRepository>>().Object);
-            
+
             var roleJwtClaimRepositorio = new RoleJwtClaimRepositoryTest(roleDbContext.Object,
                 new Mock<ILogger<RoleJwtClaimRepository>>().Object);
 

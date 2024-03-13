@@ -1,6 +1,8 @@
-﻿using JWTAuthentication.Domain.Usuarios.Roles;
+﻿using JWTAuthentication.Domain.Usuarios;
+using JWTAuthentication.Domain.Usuarios.Roles;
 using JWTAuthentication.Domain.Usuarios.Roles.Repository;
 using JWTAuthentication.Domain.Usuarios.Roles.Service;
+using Newtonsoft.Json;
 
 namespace JWTAuthentication.Application.Services
 {
@@ -10,6 +12,13 @@ namespace JWTAuthentication.Application.Services
         {
             try
             {
+                if (!role.IsValid())
+                    throw new Exception(JsonConvert
+                        .SerializeObject(role
+                        .ValidationResult
+                        .Errors));
+
+                role.Name = role.Name.ToUpper();
                 roleRepository.Add(role);
                 roleRepository.SaveChanges();
 
@@ -27,8 +36,32 @@ namespace JWTAuthentication.Application.Services
         {
             try
             {
-                roleRepository.Remove(id);
+                roleRepository.Remove(await GetById(id));
                 roleRepository.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                roleRepository.Dispose();
+            }
+        }
+
+        public async Task<Role> GetById(int id)
+        {
+            try
+            {
+                var roleFound = roleRepository
+                    .FirstOrDefault(i => i.Id == id && !i.Removed);
+
+                if (roleFound! == null!)
+                {
+                    throw new Exception("Item não encontrado");
+                }
+                return roleFound;
+
             }
             catch (Exception ex)
             {

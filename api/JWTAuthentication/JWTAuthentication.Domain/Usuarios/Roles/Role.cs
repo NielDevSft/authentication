@@ -17,7 +17,9 @@ namespace JWTAuthentication.Domain.Usuarios.Roles
         public virtual ICollection<RoleJwtClaim> RoleJwtClaims { get; set; } = new List<RoleJwtClaim>();
         public override bool IsValid()
         {
-            return true;
+            var validatorResult = Validate(this);
+            ValidationResult = validatorResult;
+            return ValidationResult.IsValid;
         }
     }
 }
