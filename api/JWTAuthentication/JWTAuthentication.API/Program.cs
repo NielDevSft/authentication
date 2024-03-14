@@ -25,7 +25,7 @@ NativeInjectorBootStrapper.RegisterServices(builder.Services, builder.Configurat
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "JWT Auth Demo", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Authentication API", Version = "v1" });
     var securityScheme = new OpenApiSecurityScheme
     {
         Name = "Authentication API",

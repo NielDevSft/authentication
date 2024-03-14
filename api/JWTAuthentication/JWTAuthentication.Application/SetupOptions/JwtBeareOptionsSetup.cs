@@ -2,17 +2,21 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System.Text;
 
 namespace JWTAuthentication.Application.SetupOptions
 {
-    public class JwtBeareOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
+    public class JwtBeareOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>, IOptions<JwtBearerOptions>
     {
         private readonly JwtOptions _jwtOptions;
         public JwtBeareOptionsSetup(IOptions<JwtOptions> options)
         {
             _jwtOptions = options.Value;
         }
+
+        public JwtBearerOptions Value { get; private set; }
+
         public void Configure(JwtBearerOptions options)
         {
             options.TokenValidationParameters = new()
@@ -27,6 +31,7 @@ namespace JWTAuthentication.Application.SetupOptions
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_jwtOptions.SecretKey))
             };
+            Value = options;
         }
 
         public void Configure(string? name, JwtBearerOptions options)
@@ -43,6 +48,7 @@ namespace JWTAuthentication.Application.SetupOptions
                 IssuerSigningKey = new SymmetricSecurityKey(
                                 Encoding.UTF8.GetBytes(_jwtOptions.SecretKey))
             };
+            Value = options;
         }
     }
 }

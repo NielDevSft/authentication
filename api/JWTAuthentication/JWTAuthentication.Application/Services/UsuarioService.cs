@@ -8,16 +8,13 @@ using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims.Repository;
 using JWTAuthentication.Domain.Usuarios.Service;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Security.Claims;
-using System.Security.Cryptography;
 
 namespace JWTAuthentication.Application.Services
 {
     public class UsuarioService(IUsuarioRepository usuarioRepository,
-        IRoleRepository roleRepository, IRoleJwtClaimRepository roleJwtClaimRepository) : IUsuarioService
+        IRoleRepository roleRepository, 
+        IRoleJwtClaimRepository roleJwtClaimRepository) : IUsuarioService
     {
 
         public async Task<Usuario> Create(Usuario usuario)
@@ -83,7 +80,7 @@ namespace JWTAuthentication.Application.Services
 
         public async Task<Usuario> GetById(int id)
         {
-            
+
             try
             {
                 var usuarioFound = usuarioRepository
@@ -104,7 +101,7 @@ namespace JWTAuthentication.Application.Services
             {
                 usuarioRepository.Dispose();
             }
-            
+
         }
 
         public async Task<Usuario> SetRoleList(int id, ICollection<int> roleIdList)
@@ -196,7 +193,7 @@ namespace JWTAuthentication.Application.Services
             return usuarioFound;
         }
 
-        
+
 
     }
 }

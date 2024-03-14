@@ -40,7 +40,6 @@ namespace JWTAuthentication.API.Controllers
             logger.LogInformation("User [{userName}] logged out the system.", userName);
             return Ok();
         }
-
         [HttpPost("refresh-token")]
         [Authorize]
         public async Task<ActionResult<JwtAuthResultDto>> RefreshToken([FromBody] RefreshTokenRequestDto request)

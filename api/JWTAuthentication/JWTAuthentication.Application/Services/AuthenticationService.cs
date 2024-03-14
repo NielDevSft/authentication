@@ -3,8 +3,10 @@ using JWTAuthentication.Domain.Authentications;
 using JWTAuthentication.Domain.Authentications.Jwts;
 using JWTAuthentication.Domain.Authentications.Services;
 using JWTAuthentication.Domain.Usuarios.Repository;
+using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims;
 using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims.Repository;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 
 namespace JWTAuthentication.Application.Services
@@ -31,20 +33,27 @@ namespace JWTAuthentication.Application.Services
                     throw new ArgumentException("" +
                         "Usuário ou senha inválidos");
                 }
-                var roleClaims = await roleJwtClaimRepository
-                    .FindAllWhereAsync(ur => ur.JwtClaim!.Id == user.JwtClaimId, "Role", "JwtClaim");
+                List<RoleJwtClaim> roleClaims = (await roleJwtClaimRepository
+                    .FindAllWhereAsync(ur => ur.JwtClaim!.Id == user.JwtClaimId, "Role", "JwtClaim"))
+                    .ToList();
+                List<Claim> claimsTypeRole = new List<Claim>();
 
-                var roles = roleClaims
+                if (roleClaims.Count > 0)
+                {
+                    var roles = roleClaims
                     .Select(ur => ur.Role);
-                var rolesTxt = roles.Select(r => r.Name).First();
+                    var rolesTxt = roles.Select(r => r.Name).First();
+
+                    claimsTypeRole.AddRange(roles
+                    .Select(r => new Claim(ClaimTypes.Role, r.Name)));
+                }
 
                 var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name ,user.Username),
                             new Claim(ClaimTypes.Email ,user.Email),
                             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
                 };
-                claims.AddRange(roles
-                    .Select(r => new Claim(ClaimTypes.Role, r.Name)));
+                claims.AddRange(claimsTypeRole);
 
                 var token = jwtProvider.GenerateTokens(user.Username,
                    claims.ToArray(), DateTime.UtcNow);

@@ -22,6 +22,7 @@ namespace JWTAuthentication.Application.Authentications
         public JwtProvider(IOptions<JwtOptions> options, IOptions<JwtBearerOptions> bearerOptions)
         {
             _jwtOptions = options.Value;
+            
             _jwtBearerOptions = bearerOptions.Value;
         }
 

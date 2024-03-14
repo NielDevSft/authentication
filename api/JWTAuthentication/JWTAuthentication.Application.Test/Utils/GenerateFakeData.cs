@@ -1,12 +1,8 @@
 ﻿using AutoFixture;
-using JWTAuthentication.Domain.Usuarios.JwsClaims;
 using JWTAuthentication.Domain.Usuarios;
+using JWTAuthentication.Domain.Usuarios.JwsClaims;
 using JWTAuthentication.Domain.Usuarios.Roles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims;
 
 namespace JWTAuthentication.Application.Test.Utils
 {
@@ -15,7 +11,8 @@ namespace JWTAuthentication.Application.Test.Utils
         public static IList<Role> Roles(Fixture fixture, int numItens)
         {
             var roles = new List<Role>();
-            while (numItens > 0) { 
+            while (numItens > 0)
+            {
                 roles.Add(fixture.Build<Role>().With(u => u.RoleJwtClaims, []).Create());
                 numItens--;
             }
@@ -30,6 +27,21 @@ namespace JWTAuthentication.Application.Test.Utils
                 numItens--;
             }
             return users;
+        }
+
+        public static IList<RoleJwtClaim> RoleJwtClaims(Fixture fixture, int numItens)
+        {
+
+            var roleJwtClaims = new List<RoleJwtClaim>();
+            while (numItens > 0)
+            {
+                roleJwtClaims.Add(fixture.Build<RoleJwtClaim>()
+                    .With(u => u.JwtClaim, new JwtClaim())
+                    .With(u => u.Role, new Role())
+                    .Create());
+                numItens--;
+            }
+            return roleJwtClaims;
         }
     }
 }

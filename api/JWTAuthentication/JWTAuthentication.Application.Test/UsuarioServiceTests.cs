@@ -1,51 +1,76 @@
 ﻿using AutoFixture;
-using JWTAuthentication.Application.Services;
+using JWTAuthentication.Application.Test.Contexts;
 using JWTAuthentication.Application.Test.Factory;
 using JWTAuthentication.Application.Test.Utils;
 using JWTAuthentication.Domain.Usuarios;
+using JWTAuthentication.Domain.Usuarios.Service;
+using Moq;
 
 namespace JWTAuthentication.Application.Test
 {
     public class UsuarioServiceTests
     {
         private static readonly Fixture fixture = new Fixture();
+        private static readonly Mock<AuthenticationOrganizationContextTest> dbContext =
+            new Mock<AuthenticationOrganizationContextTest>();
 
         [Fact]
         public async void Create_ValidInput_ShouldCreate()
         {
+
             var usuarios = GenerateFakeData.Usuarios(fixture, 4);
             var roles = GenerateFakeData.Roles(fixture, 4);
+            var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 4);
 
-            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
+            Usuario usuarioCreated = null;
 
-            // prepare
-            var usuario = new Usuario()
+            using (UsuarioFactory usuarioFactory = new UsuarioFactory(dbContext))
             {
-                Username = "Cezinha",
-                PasswordHash = HashCreator.Hash("admin123123"),
-                Email = "cezinha@vaivendo.com.br",
-            };
-            // execute
-            var usuarioCreated = await usuarioService.Create(usuario);
-            //verify
+                var data = new Dictionary<string, IList<object>>();
+                data["usuarios"] = usuarios.ToArray();
+                data["roles"] = roles.ToArray();
+                data["roleJwtClaims"] = roleJwtClaims.ToArray();
+                IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
+
+                // prepare
+                var usuario = new Usuario()
+                {
+                    Username = "Cezinha",
+                    PasswordHash = HashCreator.Hash("admin123123"),
+                    Email = "cezinha@vaivendo.com.br",
+                };
+                // execute
+                usuarioCreated = await usuarioService.Create(usuario);
+            }
+            // asserts
             Assert.True(usuarioCreated is { Removed: false, Active: true });
         }
 
         [Fact]
         public async void Create_InvalidInput_ShouldThrow()
         {
+            // prepare
             var usuarios = GenerateFakeData.Usuarios(fixture, 4);
             var roles = GenerateFakeData.Roles(fixture, 4);
-            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
-            // prepare
-            var usuario = new Usuario()
-            {
-                Username = "Cezinha",
-                PasswordHash = "admin123123",
-                Email = "cezinhavaivendo",
-            };
+            var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 3);
+
             // execure
-            var entityErros = await Assert.ThrowsAsync<Exception>(() => usuarioService.Create(usuario));
+            Exception entityErros = null;
+            using (UsuarioFactory usuarioFactory = new UsuarioFactory(dbContext))
+            {
+                var data = new Dictionary<string, IList<object>>();
+                data["usuarios"] = usuarios.ToArray();
+                data["roles"] = roles.ToArray();
+                data["roleJwtClaims"] = roleJwtClaims.ToArray();
+                IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
+                var usuario = new Usuario()
+                {
+                    Username = "Cezinha",
+                    PasswordHash = "admin123123",
+                    Email = "cezinhavaivendo",
+                };
+                entityErros = await Assert.ThrowsAsync<Exception>(() => usuarioService.Create(usuario));
+            }
             //verify
             Assert.Contains("Senha em formato inválido.", entityErros.Message);
             Assert.Contains("E-mail inválido.", entityErros.Message);
@@ -55,9 +80,19 @@ namespace JWTAuthentication.Application.Test
         {
             var usuarios = GenerateFakeData.Usuarios(fixture, 4);
             var roles = GenerateFakeData.Roles(fixture, 4);
-            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
+            var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 3);
 
-            var usuariosObtidos = await usuarioService.GetAll();
+            IList<Usuario> usuariosObtidos = new List<Usuario>();
+
+            using (UsuarioFactory usuarioFactory = new UsuarioFactory(dbContext))
+            {
+                var data = new Dictionary<string, IList<object>>();
+                data["usuarios"] = usuarios.ToArray();
+                data["roles"] = roles.ToArray();
+                data["roleJwtClaims"] = roleJwtClaims.ToArray();
+                IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
+                usuariosObtidos = await usuarioService.GetAll();
+            }
 
             Assert.Equal(usuarios.Count, usuariosObtidos.Count);
         }
@@ -67,9 +102,19 @@ namespace JWTAuthentication.Application.Test
             //prepare
             var usuarios = GenerateFakeData.Usuarios(fixture, 1);
             var roles = GenerateFakeData.Roles(fixture, 1);
-            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
+            var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 3);
+
             //execute
-            var error = await Assert.ThrowsAsync<Exception>(() => usuarioService.GetById(5));
+            Exception error = null;
+            using (UsuarioFactory usuarioFactory = new UsuarioFactory(dbContext))
+            {
+                var data = new Dictionary<string, IList<object>>();
+                data["usuarios"] = usuarios.ToArray();
+                data["roles"] = roles.ToArray();
+                data["roleJwtClaims"] = roleJwtClaims.ToArray();
+                IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
+                error = await Assert.ThrowsAsync<Exception>(() => usuarioService.GetById(5));
+            }
             //asserts
             Assert.Equal("Item não encontrado", error.Message);
         }
@@ -79,13 +124,23 @@ namespace JWTAuthentication.Application.Test
             //prepare
             var usuarios = GenerateFakeData.Usuarios(fixture, 1);
             var roles = GenerateFakeData.Roles(fixture, 1);
-            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
+            var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 3);
+
             var usuario = usuarios.First();
             var prenultimaAtualizacao = usuario.UpdateAt;
             usuario.Username = "Usuário atualizado";
 
             //execute
-            var usuarioAtualizado = await usuarioService.Update(usuario.Id, usuario);
+            Usuario usuarioAtualizado = null;
+            using (UsuarioFactory usuarioFactory = new UsuarioFactory(dbContext))
+            {
+                var data = new Dictionary<string, IList<object>>();
+                data["usuarios"] = usuarios.ToArray();
+                data["roles"] = roles.ToArray();
+                data["roleJwtClaims"] = roleJwtClaims.ToArray();
+                IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
+                usuarioAtualizado = await usuarioService.Update(usuario.Id, usuario);
+            }
 
             //asserts
             Assert.True(usuarioAtualizado is
@@ -100,13 +155,22 @@ namespace JWTAuthentication.Application.Test
             //prepare
             var usuarios = GenerateFakeData.Usuarios(fixture, 1);
             var roles = GenerateFakeData.Roles(fixture, 1);
-            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
+            var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 3);
+
             var usuario = usuarios.First();
 
+            IList<Usuario> usuariosExisting = null;
             //execute
-            await usuarioService.Delete(usuario.Id);
-
-            var usuariosExisting = (await usuarioService.GetAll());
+            using (UsuarioFactory usuarioFactory = new UsuarioFactory(dbContext))
+            {
+                var data = new Dictionary<string, IList<object>>();
+                data["usuarios"] = usuarios.ToArray();
+                data["roles"] = roles.ToArray();
+                data["roleJwtClaims"] = roleJwtClaims.ToArray();
+                IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
+                await usuarioService.Delete(usuario.Id);
+                usuariosExisting = (await usuarioService.GetAll());
+            }
 
             //asserts
             Assert.True(usuariosExisting.Count().Equals(0));
@@ -117,11 +181,19 @@ namespace JWTAuthentication.Application.Test
             //prepare
             var usuarios = GenerateFakeData.Usuarios(fixture, 1);
             var roles = GenerateFakeData.Roles(fixture, 1);
-            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
+            var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 3);
 
             //execute
-            var error = await Assert.ThrowsAsync<Exception>(() => usuarioService.Delete(-5));
-
+            Exception error = null;
+            using (UsuarioFactory usuarioFactory = new UsuarioFactory(dbContext))
+            {
+                var data = new Dictionary<string, IList<object>>();
+                data["usuarios"] = usuarios.ToArray();
+                data["roles"] = roles.ToArray();
+                data["roleJwtClaims"] = roleJwtClaims.ToArray();
+                IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
+                error = await Assert.ThrowsAsync<Exception>(() => usuarioService.Delete(-5));
+            }
             //asserts
             Assert.Equal("Item não encontrado", error.Message);
         }
@@ -131,16 +203,25 @@ namespace JWTAuthentication.Application.Test
             //prepare
             var usuarios = GenerateFakeData.Usuarios(fixture, 1);
             var roles = GenerateFakeData.Roles(fixture, 3);
-            UsuarioService usuarioService = ServiceFactory.GetUsuarioService(usuarios, roles);
+            var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 3);
 
             var rolesListOnlyIds = roles.Select(r => r.Id).ToList();
 
+            Usuario usuarioWithRoles = null;
             //execute
-            var usuarioWithRoles = await usuarioService.SetRoleList(usuarios.First().Id, rolesListOnlyIds);
+            using (UsuarioFactory usuarioFactory = new UsuarioFactory(dbContext))
+            {
+                var data = new Dictionary<string, IList<object>>();
+                data["usuarios"] = usuarios.ToArray();
+                data["roles"] = roles.ToArray();
+                data["roleJwtClaims"] = roles.ToArray();
+                IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
+                usuarioWithRoles = await usuarioService.SetRoleList(usuarios.First().Id, rolesListOnlyIds);
 
+            }
             //assertis
             Assert.Equal(3, usuarioWithRoles.JwtClaims.Subject.Split("|").Count());
-            
+
             Assert.Contains(usuarioWithRoles.JwtClaims.Subject.Split("|").First().Trim(), roles.Select(r => r.Name));
             Assert.Equal(usuarioWithRoles.JwtClaims.RoleJwtClaims.Count, roles.Count);
         }

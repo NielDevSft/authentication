@@ -12,7 +12,6 @@ namespace JWTAuthentication.API.Controllers
     [ApiController]
     public class UsuariosController(IUsuarioService usuarioService, ILogger<UsuariosController> logger) : ControllerBase
     {
-        // GET: UsuariosController
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<ICollection<UsuarioDto>>> Index()
@@ -37,8 +36,6 @@ namespace JWTAuthentication.API.Controllers
             }
 
         }
-
-        // GET: UsuariosController/Details/5
         [HttpGet("{id}")]
         public async Task<ActionResult<UsuarioDto>> Details(int id)
         {
@@ -64,8 +61,6 @@ namespace JWTAuthentication.API.Controllers
             }
             return Ok(usuario);
         }
-
-        // GET: UsuariosController/Create
         [HttpPost]
         public async Task<ActionResult<UsuarioDto>> Create([FromBody] UsuarioDto usuario)
         {
@@ -92,8 +87,6 @@ namespace JWTAuthentication.API.Controllers
             }
             return Created("success", usuarioDto);
         }
-
-
         [HttpPost("set-role-list")]
         public async Task<ActionResult<UsuarioDto>> SetRoleList([FromBody] SetRoleListDto setRoleListDto)
         {
@@ -121,61 +114,5 @@ namespace JWTAuthentication.API.Controllers
             }
             return Created("success", usuarioDto);
         }
-        //// POST: UsuariosController/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> Create(IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-
-        //// GET: UsuariosController/Edit/5
-        //public async Task<ActionResult> Edit(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: UsuariosController/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> Edit(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-
-        //// GET: UsuariosController/Delete/5
-        //public async Task<ActionResult> Delete(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: UsuariosController/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> Delete(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
     }
 }

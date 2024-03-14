@@ -1,5 +1,4 @@
-﻿using JWTAuthentication.Domain.Usuarios;
-using JWTAuthentication.Domain.Usuarios.Roles;
+﻿using JWTAuthentication.Domain.Usuarios.Roles;
 using JWTAuthentication.Domain.Usuarios.Roles.Repository;
 using JWTAuthentication.Domain.Usuarios.Roles.Service;
 using Newtonsoft.Json;

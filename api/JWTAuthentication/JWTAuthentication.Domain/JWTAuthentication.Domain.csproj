@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Usuarios\JwsClaims\Service\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\JWTAuthentication.Domain.Core\JWTAuthentication.Domain.Core.csproj" />
   </ItemGroup>
 

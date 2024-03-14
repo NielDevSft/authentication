@@ -15,26 +15,24 @@ namespace JWTAuthentication.Persistence.Repositories
         }
         public async Task<JwtClaim> FindRoleJwtClaimExisting(List<Role> roles)
         {
-            try
+
+            var roleClaimContainers = await FindAllWhereAsync(rjc => roles.Contains(rjc.Role!), "Role", "JwtClaim");
+
+            var claimCounts = roleClaimContainers
+            .Select(container => container.JwtClaim!)
+            .GroupBy(claim => claim)
+            .ToDictionary(group => group.Key, group => group.Count());
+
+            var claimWithSameRoles = claimCounts.ToList().FirstOrDefault(cc => cc.Value == roles.Count).Key;
+
+            if (claimWithSameRoles != null)
             {
-                var roleClaimContainers = await FindAllWhereAsync(rjc => roles.Contains(rjc.Role!), "Role", "JwtClaim");
-
-                var claimCounts = roleClaimContainers
-                .Select(container => container.JwtClaim!)
-                .GroupBy(claim => claim)
-                .ToDictionary(group => group.Key, group => group.Count());
-
-                var claimWithSameRoles = claimCounts.ToList().Find(cc => cc.Value == roles.Count).Key;
-
                 claimWithSameRoles.RoleJwtClaims = roleClaimContainers
-                    .ToList().FindAll(rc => rc.JwtClaimId == claimWithSameRoles.Id);
+                .ToList().FindAll(rc => rc.JwtClaimId == claimWithSameRoles.Id);
+            }
 
-                return claimWithSameRoles;
-            }
-            catch
-            {
-                return null!;
-            }
+            return claimWithSameRoles;
+
         }
     }
 }
