@@ -68,7 +68,7 @@ namespace JWTAuthentication.Application.Test
                 data["usuarios"] = usuarios.ToArray();
                 data["roleJwtClaims"] = roleJwtClaims.ToArray();
                 data["roles"] = roles.ToArray();
-                
+
                 IAuthenticationJwtService usuarioService =
                     factory.GetServiceInstace(data);
 
@@ -89,6 +89,40 @@ namespace JWTAuthentication.Application.Test
 
             Assert.False(jwtAuthResultComRefreshToken1.RefreshToken.TokenString ==
                 jwtAuthResultComRefreshToken2.RefreshToken.TokenString);
+        }
+        [Fact]
+        public async Task Logout_ValidInput_ShouldReturn()
+        {
+            var usuarios = GenerateFakeData.Usuarios(fixture, 4);
+            var roles = GenerateFakeData.Roles(fixture, 4);
+            var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 4);
+
+            usuarios[1].Email = "email@valido.com";
+            usuarios[1].PasswordHash = HashCreator.Hash("admin123123");
+            
+            JwtAuthResult jwtAuthResultComRefreshToken1 = null;
+            JwtAuthResult jwtAuthResultComUnlogged= null;
+            using (AuthenticationJwtFactory factory = new AuthenticationJwtFactory(dbContext))
+            {
+                var data = new Dictionary<string, IList<object>>();
+                data["usuarios"] = usuarios.ToArray();
+                data["roleJwtClaims"] = roleJwtClaims.ToArray();
+                data["roles"] = roles.ToArray();
+                IAuthenticationJwtService usuarioService =
+                    factory.GetServiceInstace(data);
+                usuarios[1] = await PrepareUsuarioToLogin(usuarios[1], roles);
+                jwtAuthResultComRefreshToken1 = await usuarioService.Login(new()
+                {
+                    Email = usuarios[1].Email,
+                    Password = usuarios[1].PasswordHash
+                });
+
+                await usuarioService.Logout(jwtAuthResultComRefreshToken1.RefreshToken.TokenString);
+                jwtAuthResultComUnlogged = await usuarioService.RefreshToken(jwtAuthResultComRefreshToken1.RefreshToken.TokenString,
+                    jwtAuthResultComRefreshToken1.AccessToken);
+            }
+
+            Assert.True(jwtAuthResultComRefreshToken1.RefreshToken.ExpireAt < jwtAuthResultComUnlogged.RefreshToken.ExpireAt);
         }
 
         public async Task<Usuario> PrepareUsuarioToLogin(Usuario usuario, IList<Role> roles)
