@@ -4,7 +4,7 @@ using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
 using System.Reflection;
 
-namespace EmpresaAPI.Configurations
+namespace JWTAuthentication.Application.Configurations
 {
     public static class LoggingConfiguration
     {
@@ -18,7 +18,7 @@ namespace EmpresaAPI.Configurations
                 .Enrich.WithExceptionDetails()
                 .WriteTo.Debug()
                 .WriteTo.Console()
-                .WriteTo.Elasticsearch(ConfigureElasticSink(settings, enviroment))
+                .WriteTo.Elasticsearch(settings.ConfigureElasticSink(enviroment))
                 .Enrich.WithProperty("Environment", enviroment)
                 .ReadFrom.Configuration(settings)
                 .CreateLogger();

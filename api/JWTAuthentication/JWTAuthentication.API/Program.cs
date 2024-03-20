@@ -1,4 +1,5 @@
-using EmpresaAPI.Configurations;
+
+using JWTAuthentication.Application.Configurations;
 using JWTAuthentication.Common.IoC;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -59,9 +60,6 @@ app.UseSwaggerUI(c =>
 });
 app.UseRouting();
 app.UseCors("AllowAll");
-
-
-
 
 app.MapControllers();
 NativeInjectorBootStrapper.RegisterApplication(app);

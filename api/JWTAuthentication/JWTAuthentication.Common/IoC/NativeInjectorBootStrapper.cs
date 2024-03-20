@@ -1,4 +1,5 @@
 ﻿using JWTAuthentication.Application.Authentications;
+using JWTAuthentication.Application.Configurations;
 using JWTAuthentication.Application.SetupOptions;
 using JWTAuthentication.Persistence.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,7 +17,7 @@ namespace JWTAuthentication.Common.IoC
     {
         public static void RegisterServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddControllers();
+            MvcConfiguration.AddMvcSecurity(services);
             //jwt
             var jwtTokenConfig = configuration.GetSection("JwtConfig").Get<JwtOptions>()!;
 

@@ -87,6 +87,7 @@ namespace JWTAuthentication.API.Controllers
             }
             return Created("success", usuarioDto);
         }
+
         [HttpPost("set-role-list")]
         public async Task<ActionResult<UsuarioDto>> SetRoleList([FromBody] SetRoleListDto setRoleListDto)
         {
