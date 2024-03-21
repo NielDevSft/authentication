@@ -3,7 +3,6 @@ using JWTAuthentication.Domain.Usuarios.Roles;
 using JWTAuthentication.Domain.Usuarios.Roles.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace JWTAuthentication.API.Controllers
 {
@@ -16,7 +15,7 @@ namespace JWTAuthentication.API.Controllers
         [Authorize]
         public async Task<ActionResult<RoleDto>> Create([FromBody] RoleDto role)
         {
-            RoleDto roleDto = null;
+            RoleDto roleDto;
             try
             {
                 var roleCreated = await roleService.Create(new Role()
@@ -56,7 +55,7 @@ namespace JWTAuthentication.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+        [HttpDelete("{uuid}")]
         [Authorize]
         public async Task<ActionResult> Delete(Guid uuid)
         {

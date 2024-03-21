@@ -99,9 +99,9 @@ namespace JWTAuthentication.Application.Test
 
             usuarios[1].Email = "email@valido.com";
             usuarios[1].PasswordHash = HashCreator.Hash("admin123123");
-            
+
             JwtAuthResult jwtAuthResultComRefreshToken1 = null;
-            JwtAuthResult jwtAuthResultComUnlogged= null;
+            JwtAuthResult jwtAuthResultComUnlogged = null;
             using (AuthenticationJwtFactory factory = new AuthenticationJwtFactory(dbContext))
             {
                 var data = new Dictionary<string, IList<object>>();

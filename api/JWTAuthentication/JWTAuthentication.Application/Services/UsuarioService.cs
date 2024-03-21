@@ -9,7 +9,6 @@ using JWTAuthentication.Domain.Usuarios.Service;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Data;
-using System.Linq;
 
 namespace JWTAuthentication.Application.Services
 {

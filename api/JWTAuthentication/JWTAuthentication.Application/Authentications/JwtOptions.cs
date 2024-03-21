@@ -2,7 +2,7 @@
 
 namespace JWTAuthentication.Application.Authentications
 {
-    public class JwtOptions: IOptions<JwtOptions>
+    public class JwtOptions : IOptions<JwtOptions>
     {
         public string Issuer { get; init; }
         public string Audience { get; init; }

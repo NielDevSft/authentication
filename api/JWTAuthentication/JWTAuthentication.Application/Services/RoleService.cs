@@ -2,7 +2,6 @@
 using JWTAuthentication.Domain.Usuarios.Roles.Repository;
 using JWTAuthentication.Domain.Usuarios.Roles.Service;
 using Newtonsoft.Json;
-using System;
 
 namespace JWTAuthentication.Application.Services
 {
@@ -32,45 +31,27 @@ namespace JWTAuthentication.Application.Services
             return role;
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(Guid uuid)
         {
-            try
-            {
-                roleRepository.Remove(await GetById(id));
-                roleRepository.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                roleRepository.Dispose();
-            }
+            await Task.Run(() => roleRepository.Remove(uuid));
+            roleRepository.SaveChanges();
+            roleRepository.Dispose();
         }
 
         public async Task<Role> GetById(Guid uuid)
         {
-            try
-            {
-                var roleFound = roleRepository
-                    .FirstOrDefault(i => i.Uuid == uuid && !i.Removed);
+            var roleFound = (await roleRepository
+                .FindAllWhereAsync(i => i.Uuid == uuid && !i.Removed)).FirstOrDefault();
 
-                if (roleFound! == null!)
-                {
-                    throw new Exception("Item não encontrado");
-                }
-                return roleFound;
+            if (roleFound! == null!)
+            {
+                throw new Exception("Item não encontrado");
+            }
+            roleRepository.Dispose();
+            return roleFound;
 
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                roleRepository.Dispose();
-            }
+
+
         }
 
         public async Task<List<Role>> GetAll()

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace JWTAuthentication.Domain.Usuarios.Service
+﻿namespace JWTAuthentication.Domain.Usuarios.Service
 {
     public interface IUsuarioService
     {

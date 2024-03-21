@@ -56,7 +56,7 @@ namespace JWTAuthentication.API.Controllers
                     return Unauthorized();
                 }
                 var accessToken = await HttpContext.GetTokenAsync("Bearer", "access_token");
-                var refreshToken  = JsonConvert.DeserializeObject<RefreshToken>(request.RefreshToken);
+                var refreshToken = JsonConvert.DeserializeObject<RefreshToken>(request.RefreshToken);
                 var jwtResult = await service.RefreshToken((refreshToken!.TokenString), accessToken ?? string.Empty);
 
                 return Ok(new JwtAuthResultDto(jwtResult.AccessToken, jwtResult.RefreshToken));

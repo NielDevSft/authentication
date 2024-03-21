@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using JWTAuthentication.Domain.Core.Models;
 using JWTAuthentication.Domain.Usuarios.JwsClaims;
-using System;
 
 namespace JWTAuthentication.Domain.Usuarios
 {

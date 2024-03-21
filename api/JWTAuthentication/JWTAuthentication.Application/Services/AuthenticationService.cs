@@ -6,7 +6,6 @@ using JWTAuthentication.Domain.Usuarios.Repository;
 using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims;
 using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims.Repository;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 
 namespace JWTAuthentication.Application.Services

@@ -3,8 +3,6 @@ using JWTAuthentication.Domain.Usuarios.Roles.Repository;
 using JWTAuthentication.Persistence.Abstractions;
 using JWTAuthentication.Persistence.Contexts;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
 
 namespace JWTAuthentication.Persistence.Repositories
 {
