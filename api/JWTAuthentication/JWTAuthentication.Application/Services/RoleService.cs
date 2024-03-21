@@ -9,25 +9,18 @@ namespace JWTAuthentication.Application.Services
     {
         public async Task<Role> Create(Role role)
         {
-            try
-            {
-                if (!role.IsValid())
-                    throw new Exception(JsonConvert
-                        .SerializeObject(role
-                        .ValidationResult
-                        .Errors));
 
-                role.Name = role.Name.ToUpper();
-                roleRepository.Add(role);
-                roleRepository.SaveChanges();
+            if (!role.IsValid())
+                throw new Exception(JsonConvert
+                    .SerializeObject(role
+                    .ValidationResult
+                    .Errors));
 
-                roleRepository.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally { roleRepository.Dispose(); }
+            role.Name = role.Name.ToUpper();
+            roleRepository.Add(role);
+            roleRepository.SaveChanges();
+
+            roleRepository.SaveChanges();
             return role;
         }
 
@@ -35,7 +28,6 @@ namespace JWTAuthentication.Application.Services
         {
             await Task.Run(() => roleRepository.Remove(uuid));
             roleRepository.SaveChanges();
-            roleRepository.Dispose();
         }
 
         public async Task<Role> GetById(Guid uuid)
@@ -47,28 +39,15 @@ namespace JWTAuthentication.Application.Services
             {
                 throw new Exception("Item não encontrado");
             }
-            roleRepository.Dispose();
+
             return roleFound;
-
-
-
         }
 
         public async Task<List<Role>> GetAll()
         {
             var roleList = new List<Role>();
-            try
-            {
-                roleList.AddRange(await roleRepository.FindAllWhereAsync(i => !i.Removed));
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                roleRepository.Dispose();
-            }
+            roleList.AddRange(await roleRepository.FindAllWhereAsync(i => !i.Removed));
+
             return roleList;
         }
     }

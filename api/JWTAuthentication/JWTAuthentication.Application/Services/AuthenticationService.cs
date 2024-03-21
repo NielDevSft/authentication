@@ -66,7 +66,7 @@ namespace JWTAuthentication.Application.Services
             }
             finally
             {
-                usuarioRepository.Dispose();
+                
             }
         }
 

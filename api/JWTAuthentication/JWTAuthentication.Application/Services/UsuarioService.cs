@@ -19,23 +19,18 @@ namespace JWTAuthentication.Application.Services
 
         public async Task<Usuario> Create(Usuario usuario)
         {
-            try
-            {
-                if (!usuario.IsValid())
-                    throw new Exception(JsonConvert
-                        .SerializeObject(usuario
-                        .ValidationResult
-                        .Errors));
 
-                usuarioRepository.Add(usuario);
-                usuarioRepository.SaveChanges();
+            if (!usuario.IsValid())
+                throw new Exception(JsonConvert
+                    .SerializeObject(usuario
+                    .ValidationResult
+                    .Errors));
 
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally { usuarioRepository.Dispose(); }
+            usuarioRepository.Add(usuario);
+            usuarioRepository.SaveChanges();
+
+
+
             return usuario;
         }
 
@@ -43,25 +38,15 @@ namespace JWTAuthentication.Application.Services
         {
             await Task.Run(() => usuarioRepository.Remove(uuid));
             usuarioRepository.SaveChanges();
-            usuarioRepository.Dispose();
         }
 
         public async Task<List<Usuario>> GetAll()
         {
 
             var usuairoList = new List<Usuario>();
-            try
-            {
-                usuairoList.AddRange(await usuarioRepository.FindAllWhereAsync(i => !i.Removed));
-            }
-            catch (Exception ex)
-            {
-                return usuairoList;
-            }
-            finally
-            {
-                usuarioRepository.Dispose();
-            }
+
+            usuairoList.AddRange(await usuarioRepository.FindAllWhereAsync(i => !i.Removed));
+
             return usuairoList;
         }
 
@@ -79,7 +64,7 @@ namespace JWTAuthentication.Application.Services
                 usuarioFound.JwtClaims!.RoleJwtClaims = await roleJwtClaimRepository
                     .FindAllWhereAsync(rjc => rjc.JwtClaimUuid == usuarioFound.JwtClaimUuid, "Role", "JwtClaim");
 
-            usuarioRepository.Dispose();
+
             return usuarioFound;
 
 
@@ -154,7 +139,7 @@ namespace JWTAuthentication.Application.Services
             usuarioRepository.Update(usuarioFound);
             usuarioRepository.SaveChanges();
 
-            usuarioRepository.Dispose();
+
 
             return usuarioFound;
         }
