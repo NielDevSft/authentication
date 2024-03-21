@@ -15,12 +15,11 @@ namespace JWTAuthentication.Domain.Usuarios
             RuleFor(u => u.PasswordHash)
                 .Length(40)
                 .WithMessage("Senha em formato inválido.");
-            JwtClaims = new JwtClaim();
         }
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
-        public JwtClaim JwtClaims { get; set; }
+        public JwtClaim? JwtClaims { get; set; }
         public Guid? JwtClaimUuid { get; set; }
         public override bool IsValid()
         {

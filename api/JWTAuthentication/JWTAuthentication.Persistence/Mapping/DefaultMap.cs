@@ -1,5 +1,6 @@
 ﻿using JWTAuthentication.Domain.Core.Models;
 using JWTAuthentication.Persistence.Extentions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JWTAuthentication.Persistence.Mapping
@@ -8,8 +9,9 @@ namespace JWTAuthentication.Persistence.Mapping
     {
         public override void Map(EntityTypeBuilder<T> builder)
         {
-            builder.HasKey(e => e.Uuid);
-
+            builder.Property(u => u.Uuid)
+                .HasDefaultValueSql("newsequentialid()");
+            builder.HasKey(u => u.Uuid);
             builder.Property(e => e.Active)
                 .IsRequired();
 

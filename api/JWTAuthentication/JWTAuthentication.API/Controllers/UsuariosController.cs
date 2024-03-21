@@ -36,10 +36,11 @@ namespace JWTAuthentication.API.Controllers
             }
 
         }
-        [HttpGet("{id}")]
+        [HttpGet("{uuid}")]
+        [Authorize]
         public async Task<ActionResult<UsuarioDto>> Details(Guid uuid)
         {
-            UsuarioDto usuario = null;
+            UsuarioDto usuario;
             try
             {
 
@@ -64,7 +65,7 @@ namespace JWTAuthentication.API.Controllers
         [HttpPost]
         public async Task<ActionResult<UsuarioDto>> Create([FromBody] UsuarioDto usuario)
         {
-            UsuarioDto usuarioDto = null;
+            UsuarioDto usuarioDto;
             try
             {
                 var usuarioCreated = await usuarioService.Create(new Usuario()
@@ -91,7 +92,7 @@ namespace JWTAuthentication.API.Controllers
         [HttpPost("set-role-list")]
         public async Task<ActionResult<UsuarioDto>> SetRoleList([FromBody] SetRoleListDto setRoleListDto)
         {
-            UsuarioDto usuarioDto = null;
+            UsuarioDto usuarioDto;
             try
             {
                 var usuarioCreated = await usuarioService.SetRoleList(Guid.Parse(setRoleListDto.uuid),
@@ -100,9 +101,9 @@ namespace JWTAuthentication.API.Controllers
                     usuarioCreated.Username,
                     usuarioCreated.PasswordHash,
                     usuarioCreated
-                    .JwtClaims
+                    .JwtClaims!
                     .RoleJwtClaims.Select(c => c.Role)
-                    .Select(r => new RoleDto(r!.Uuid.ToString(), r.Name, r.CreateAt, r.UpdateAt))
+                    .Select(r => new RoleDto(r!.Name, r.CreateAt, r.UpdateAt, r.Uuid.ToString()))
                     .ToList(),
                     usuarioCreated.Uuid.ToString(),
                     usuarioCreated.CreateAt,

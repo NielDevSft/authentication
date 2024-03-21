@@ -9,6 +9,7 @@ using JWTAuthentication.Domain.Usuarios.Service;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Data;
+using System.Linq;
 
 namespace JWTAuthentication.Application.Services
 {
@@ -30,7 +31,6 @@ namespace JWTAuthentication.Application.Services
                 usuarioRepository.Add(usuario);
                 usuarioRepository.SaveChanges();
 
-                usuarioRepository.SaveChanges();
             }
             catch (Exception ex)
             {

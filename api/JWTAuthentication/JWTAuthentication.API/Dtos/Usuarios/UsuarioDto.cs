@@ -6,7 +6,7 @@ namespace JWTAuthentication.API.Dtos.Usuarios
         string Email,
         string Username,
         string PasswordHash,
-        ICollection<RoleDto> roles,
+        ICollection<RoleDto> roles = null!,
         string? Uuid = null,
         DateTime? CreateAt = null,
         DateTime? UpdateAt = null)
