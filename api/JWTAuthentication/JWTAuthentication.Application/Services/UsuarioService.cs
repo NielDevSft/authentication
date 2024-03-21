@@ -41,11 +41,9 @@ namespace JWTAuthentication.Application.Services
 
         public async Task Delete(Guid uuid)
         {
-
-            usuarioRepository.Remove(await GetById(uuid));
+            await Task.Run(() => usuarioRepository.Remove(uuid));
             usuarioRepository.SaveChanges();
             usuarioRepository.Dispose();
-
         }
 
         public async Task<List<Usuario>> GetAll()
@@ -72,12 +70,15 @@ namespace JWTAuthentication.Application.Services
 
 
             var usuarioFound = (await usuarioRepository
-                .FindAllWhereAsync(i => i.Uuid == Uuid && !i.Removed)).FirstOrDefault();
-
+                .FindAllWhereAsync(i => i.Uuid == Uuid && !i.Removed, "JwtClaims")).FirstOrDefault();
             if (usuarioFound! == null!)
             {
                 throw new Exception("Item não encontrado");
             }
+            if (usuarioFound.JwtClaims! != null!)
+                usuarioFound.JwtClaims!.RoleJwtClaims = await roleJwtClaimRepository
+                    .FindAllWhereAsync(rjc => rjc.JwtClaimUuid == usuarioFound.JwtClaimUuid, "Role", "JwtClaim");
+
             usuarioRepository.Dispose();
             return usuarioFound;
 

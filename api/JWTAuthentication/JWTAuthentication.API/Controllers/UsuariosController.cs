@@ -3,7 +3,10 @@ using JWTAuthentication.API.Dtos.Usuarios;
 using JWTAuthentication.Domain.Usuarios;
 using JWTAuthentication.Domain.Usuarios.Service;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace JWTAuthentication.API.Controllers
 {
@@ -48,8 +51,14 @@ namespace JWTAuthentication.API.Controllers
                 usuario = new UsuarioDto(
                 usuarioExisting.Email,
                     usuarioExisting.Username,
-                    usuarioExisting.PasswordHash,
-                    null!,
+                usuarioExisting.PasswordHash,
+                    usuarioExisting.JwtClaims?
+                        .RoleJwtClaims
+                        .Select(rjc => new RoleDto(
+                            rjc.Role!.Name,
+                            rjc.Role!.CreateAt,
+                            rjc.Role!.UpdateAt,
+                            rjc.Role!.Uuid.ToString())).ToList()!,
                     usuarioExisting.Uuid.ToString(),
                     usuarioExisting.CreateAt,
                     usuarioExisting.UpdateAt
