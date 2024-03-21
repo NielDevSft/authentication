@@ -89,14 +89,13 @@ namespace JWTAuthentication.API.Controllers
             return Created("success", usuarioDto);
         }
 
-        [HttpPost("set-role-list")]
-        public async Task<ActionResult<UsuarioDto>> SetRoleList([FromBody] SetRoleListDto setRoleListDto)
+        [HttpPost("{uuid}/Roles")]
+        public async Task<ActionResult<UsuarioDto>> SetRoleList(Guid uuid, [FromBody] ICollection<Guid> uuidRoles)
         {
             UsuarioDto usuarioDto;
             try
             {
-                var usuarioCreated = await usuarioService.SetRoleList(Guid.Parse(setRoleListDto.uuid),
-                    setRoleListDto.roles.Select(rUuid => Guid.Parse(rUuid)).ToList());
+                var usuarioCreated = await usuarioService.SetRoleList(uuid, uuidRoles);
                 usuarioDto = new UsuarioDto(usuarioCreated.Email,
                     usuarioCreated.Username,
                     usuarioCreated.PasswordHash,
