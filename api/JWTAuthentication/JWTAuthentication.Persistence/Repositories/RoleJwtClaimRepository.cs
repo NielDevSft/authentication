@@ -28,7 +28,7 @@ namespace JWTAuthentication.Persistence.Repositories
             if (claimWithSameRoles != null)
             {
                 claimWithSameRoles.RoleJwtClaims = roleClaimContainers
-                .ToList().FindAll(rc => rc.JwtClaimId == claimWithSameRoles.Id);
+                .ToList().FindAll(rc => rc.JwtClaimUuid == claimWithSameRoles.Uuid);
             }
 
             return claimWithSameRoles;

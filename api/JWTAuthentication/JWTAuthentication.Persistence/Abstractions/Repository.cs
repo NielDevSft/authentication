@@ -74,18 +74,18 @@ namespace JWTAuthentication.Persistence.Abstractions
             return query.FirstOrDefault();
         }
 
-        public TEntity? GetById(int id, params string[] includes)
+        public TEntity? GetById(Guid uuid, params string[] includes)
         {
             _logger.LogInformation($"Obtendo {this.GetType().Name}");
-            var query = DbSet.AsNoTracking().Where(e => e.Id == id);
+            var query = DbSet.AsNoTracking().Where(e => e.Uuid == uuid);
             query = Includes(query, includes);
-            _logger.LogInformation($"{this.GetType().Name}, id {id} obtido");
+            _logger.LogInformation($"{this.GetType().Name}, id {uuid} obtido");
             return query.FirstOrDefault();
         }
 
-        public void Remove(int id)
+        public void Remove(Guid uuid)
         {
-            var obj = GetById(id);
+            var obj = GetById(uuid);
             if (obj! != null)
             {
                 obj!.Removed = true;
@@ -101,7 +101,7 @@ namespace JWTAuthentication.Persistence.Abstractions
 
         public void Update(TEntity obj)
         {
-            _logger.LogInformation($"Atualizando objeto {this.GetType().Name}, id {obj.Id}");
+            _logger.LogInformation($"Atualizando objeto {this.GetType().Name}, id {obj.Uuid}");
             obj.UpdateAt = DateTime.UtcNow;
             DbSet.Update(obj);
         }
@@ -143,12 +143,12 @@ namespace JWTAuthentication.Persistence.Abstractions
             return query.ToList();
         }
 
-        public async Task<TEntity?> GetByIdAsync(int id, params string[] includes)
+        public async Task<TEntity?> GetByIdAsync(Guid uuid, params string[] includes)
         {
-            _logger.LogInformation($"Obtendo {this.GetType().Name}, id {id}");
-            var query = DbSet.AsNoTracking().Where(e => e.Id == id);
+            _logger.LogInformation($"Obtendo {this.GetType().Name}, id {uuid}");
+            var query = DbSet.AsNoTracking().Where(e => e.Uuid == uuid);
             query = Includes(query, includes);
-            _logger.LogInformation($"{this.GetType().BaseType}, id {id} obtido");
+            _logger.LogInformation($"{this.GetType().BaseType}, id {uuid} obtido");
             return query.FirstOrDefault();
         }
 

@@ -6,8 +6,8 @@ namespace JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims
 
     public class RoleJwtClaim : Entity<RoleJwtClaim>
     {
-        public int? JwtClaimId { get; set; }
-        public int? RoleId { get; set; }
+        public Guid? JwtClaimUuid { get; set; }
+        public Guid? RoleUuid { get; set; }
         public virtual Role? Role { get; set; }
 
         public virtual JwtClaim? JwtClaim { get; set; }

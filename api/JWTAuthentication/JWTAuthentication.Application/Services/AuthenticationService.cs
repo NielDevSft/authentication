@@ -34,7 +34,7 @@ namespace JWTAuthentication.Application.Services
                         "Usuário ou senha inválidos");
                 }
                 List<RoleJwtClaim> roleClaims = (await roleJwtClaimRepository
-                    .FindAllWhereAsync(ur => ur.JwtClaim!.Id == user.JwtClaimId, "Role", "JwtClaim"))
+                    .FindAllWhereAsync(ur => ur.JwtClaim!.Uuid == user.JwtClaimUuid, "Role", "JwtClaim"))
                     .ToList();
                 List<Claim> claimsTypeRole = new List<Claim>();
 
@@ -51,7 +51,7 @@ namespace JWTAuthentication.Application.Services
                 var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name ,user.Username),
                             new Claim(ClaimTypes.Email ,user.Email),
-                            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
+                            new Claim(JwtRegisteredClaimNames.Sub, user.Uuid.ToString())
                 };
                 claims.AddRange(claimsTypeRole);
 

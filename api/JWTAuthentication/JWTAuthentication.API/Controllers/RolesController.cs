@@ -2,6 +2,7 @@
 using JWTAuthentication.Domain.Usuarios.Roles;
 using JWTAuthentication.Domain.Usuarios.Roles.Service;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace JWTAuthentication.API.Controllers
 {
@@ -22,7 +23,7 @@ namespace JWTAuthentication.API.Controllers
                 });
                 roleDto = role with
                 {
-                    Id = roleCreated.Id,
+                    Uuid = roleCreated.Uuid.ToString(),
                     CreateAt = roleCreated.CreateAt,
                     UpdateAt = roleCreated.UpdateAt,
                 };
@@ -43,7 +44,7 @@ namespace JWTAuthentication.API.Controllers
 
                 var roleList = await roleService.GetAll();
                 return Ok(roleList.Select(r =>
-                new RoleDto(r.Id, r.Name, r.CreateAt, r.UpdateAt)
+                new RoleDto(r.Uuid.ToString(), r.Name, r.CreateAt, r.UpdateAt)
                ));
             }
             catch (Exception ex)
@@ -53,11 +54,11 @@ namespace JWTAuthentication.API.Controllers
             }
         }
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid uuid)
         {
             try
             {
-                await roleService.Delete(id);
+                await roleService.Delete(uuid);
                 return Ok();
             }
             catch (Exception ex)

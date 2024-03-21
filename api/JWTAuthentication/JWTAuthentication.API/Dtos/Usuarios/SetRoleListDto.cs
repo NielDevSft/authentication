@@ -1,6 +1,6 @@
 ﻿namespace JWTAuthentication.API.Dtos.Usuarios
 {
-    public record SetRoleListDto(int id, IEnumerable<int> roles)
+    public record SetRoleListDto(string uuid, IEnumerable<string> roles)
     {
     }
 }

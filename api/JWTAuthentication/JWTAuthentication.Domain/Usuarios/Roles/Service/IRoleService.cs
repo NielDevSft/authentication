@@ -3,8 +3,8 @@
     public interface IRoleService
     {
         public Task<Role> Create(Role role);
-        public Task Delete(int id);
+        public Task Delete(Guid uuid);
         public Task<List<Role>> GetAll();
-        public Task<Role> GetById(int id);
+        public Task<Role> GetById(Guid uuid);
     }
 }

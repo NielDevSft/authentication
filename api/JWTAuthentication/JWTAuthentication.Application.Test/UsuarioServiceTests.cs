@@ -105,7 +105,7 @@ namespace JWTAuthentication.Application.Test
             var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 3);
 
             //execute
-            Exception error = null;
+            Exception error = null!;
             using (UsuarioFactory usuarioFactory = new UsuarioFactory(dbContext))
             {
                 var data = new Dictionary<string, IList<object>>();
@@ -113,7 +113,7 @@ namespace JWTAuthentication.Application.Test
                 data["roles"] = roles.ToArray();
                 data["roleJwtClaims"] = roleJwtClaims.ToArray();
                 IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
-                error = await Assert.ThrowsAsync<Exception>(() => usuarioService.GetById(5));
+                error = await Assert.ThrowsAsync<Exception>(() => usuarioService.GetById(new Guid()));
             }
             //asserts
             Assert.Equal("Item não encontrado", error.Message);
@@ -139,7 +139,7 @@ namespace JWTAuthentication.Application.Test
                 data["roles"] = roles.ToArray();
                 data["roleJwtClaims"] = roleJwtClaims.ToArray();
                 IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
-                usuarioAtualizado = await usuarioService.Update(usuario.Id, usuario);
+                usuarioAtualizado = await usuarioService.Update(usuario.Uuid, usuario);
             }
 
             //asserts
@@ -168,7 +168,7 @@ namespace JWTAuthentication.Application.Test
                 data["roles"] = roles.ToArray();
                 data["roleJwtClaims"] = roleJwtClaims.ToArray();
                 IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
-                await usuarioService.Delete(usuario.Id);
+                await usuarioService.Delete(usuario.Uuid);
                 usuariosExisting = (await usuarioService.GetAll());
             }
 
@@ -184,7 +184,7 @@ namespace JWTAuthentication.Application.Test
             var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 3);
 
             //execute
-            Exception error = null;
+            Exception error = null!;
             using (UsuarioFactory usuarioFactory = new UsuarioFactory(dbContext))
             {
                 var data = new Dictionary<string, IList<object>>();
@@ -192,7 +192,7 @@ namespace JWTAuthentication.Application.Test
                 data["roles"] = roles.ToArray();
                 data["roleJwtClaims"] = roleJwtClaims.ToArray();
                 IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
-                error = await Assert.ThrowsAsync<Exception>(() => usuarioService.Delete(-5));
+                error = await Assert.ThrowsAsync<Exception>(() => usuarioService.Delete(Guid.NewGuid()));
             }
             //asserts
             Assert.Equal("Item não encontrado", error.Message);
@@ -205,7 +205,7 @@ namespace JWTAuthentication.Application.Test
             var roles = GenerateFakeData.Roles(fixture, 3);
             var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 3);
 
-            var rolesListOnlyIds = roles.Select(r => r.Id).ToList();
+            var rolesListOnlyIds = roles.Select(r => r.Uuid).ToList();
 
             Usuario usuarioWithRoles = null;
             //execute
@@ -216,7 +216,7 @@ namespace JWTAuthentication.Application.Test
                 data["roles"] = roles.ToArray();
                 data["roleJwtClaims"] = roles.ToArray();
                 IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
-                usuarioWithRoles = await usuarioService.SetRoleList(usuarios.First().Id, rolesListOnlyIds);
+                usuarioWithRoles = await usuarioService.SetRoleList(usuarios.First().Uuid, rolesListOnlyIds);
 
             }
             //assertis

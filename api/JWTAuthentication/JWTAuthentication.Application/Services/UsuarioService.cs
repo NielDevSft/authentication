@@ -13,7 +13,7 @@ using System.Data;
 namespace JWTAuthentication.Application.Services
 {
     public class UsuarioService(IUsuarioRepository usuarioRepository,
-        IRoleRepository roleRepository, 
+        IRoleRepository roleRepository,
         IRoleJwtClaimRepository roleJwtClaimRepository) : IUsuarioService
     {
 
@@ -40,23 +40,13 @@ namespace JWTAuthentication.Application.Services
             return usuario;
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(Guid uuid)
         {
-            try
-            {
-                usuarioRepository.Remove(await GetById(id));
-                usuarioRepository.SaveChanges();
 
-            }
-            catch (Exception ex)
-            {
+            usuarioRepository.Remove(await GetById(uuid));
+            usuarioRepository.SaveChanges();
+            usuarioRepository.Dispose();
 
-                throw ex;
-            }
-            finally
-            {
-                usuarioRepository.Dispose();
-            }
         }
 
         public async Task<List<Usuario>> GetAll()
@@ -78,38 +68,30 @@ namespace JWTAuthentication.Application.Services
             return usuairoList;
         }
 
-        public async Task<Usuario> GetById(int id)
+        public async Task<Usuario> GetById(Guid Uuid)
         {
 
-            try
-            {
-                var usuarioFound = usuarioRepository
-                    .FirstOrDefault(i => i.Id == id && !i.Removed);
 
-                if (usuarioFound! == null)
-                {
-                    throw new Exception("Item não encontrado");
-                }
-                return usuarioFound;
+            var usuarioFound = (await usuarioRepository
+                .FindAllWhereAsync(i => i.Uuid == Uuid && !i.Removed)).FirstOrDefault();
 
-            }
-            catch (Exception ex)
+            if (usuarioFound! == null!)
             {
-                throw ex;
+                throw new Exception("Item não encontrado");
             }
-            finally
-            {
-                usuarioRepository.Dispose();
-            }
+            usuarioRepository.Dispose();
+            return usuarioFound;
+
+
 
         }
 
-        public async Task<Usuario> SetRoleList(int id, ICollection<int> roleIdList)
+        public async Task<Usuario> SetRoleList(Guid uuid, ICollection<Guid> roleIdList)
         {
             var roles = new List<Role>();
-            Usuario usuario = null;
-            var usuarioTask = usuarioRepository.GetByIdAsync(id);
-            var rolesTask = roleRepository.FindAllWhereAsync(r => roleIdList.Contains(r.Id));
+            Usuario usuario = null!;
+            var usuarioTask = usuarioRepository.GetByIdAsync(uuid);
+            var rolesTask = roleRepository.FindAllWhereAsync(r => roleIdList.Contains(r.Uuid));
             var roleJwtClaim = new List<RoleJwtClaim>();
 
             await Task.WhenAll(usuarioTask, rolesTask);
@@ -125,39 +107,31 @@ namespace JWTAuthentication.Application.Services
             {
                 throw new ArgumentException("Usuário não encontrado");
             }
-            try
+
+            JwtClaim claim = await roleJwtClaimRepository.FindRoleJwtClaimExisting(roles.ToList());
+
+            if (claim != null!)
             {
-                JwtClaim claim = await roleJwtClaimRepository.FindRoleJwtClaimExisting(roles.ToList());
-
-                if (claim != null!)
-                {
-                    usuario.JwtClaimId = claim.Id;
-                    usuario.JwtClaims = claim;
-                    usuarioRepository.Update(usuario);
-                    return usuario;
-                }
-                usuario.JwtClaims = new JwtClaim()
-                {
-                    Subject = BuildSubjectClaim(roles.ToList())
-                };
-
-                usuario
-                    .JwtClaims
-                    .RoleJwtClaims = roles.Select(r => new RoleJwtClaim()
-                    {
-                        RoleId = r.Id,
-                        Role = r,
-                    }).ToList();
+                usuario.JwtClaimUuid = claim.Uuid;
+                usuario.JwtClaims = claim;
                 usuarioRepository.Update(usuario);
+                return usuario;
             }
-            catch (Exception ex)
+            usuario.JwtClaims = new JwtClaim()
             {
-                throw ex;
-            }
-            finally
-            {
-                usuarioRepository.SaveChanges();
-            }
+                Subject = BuildSubjectClaim(roles.ToList())
+            };
+
+            usuario
+                .JwtClaims
+                .RoleJwtClaims = roles.Select(r => new RoleJwtClaim()
+                {
+                    RoleUuid = r.Uuid,
+                    Role = r,
+                }).ToList();
+            usuarioRepository.Update(usuario);
+
+            usuarioRepository.SaveChanges();
             return usuario;
         }
 
@@ -169,26 +143,18 @@ namespace JWTAuthentication.Application.Services
             return subject;
         }
 
-        public async Task<Usuario> Update(int id, Usuario usuario)
+        public async Task<Usuario> Update(Guid uuid, Usuario usuario)
         {
             Usuario? usuarioFound = null;
-            try
-            {
-                usuarioFound = usuarioRepository.GetById(id)!;
-                usuarioFound.Email = usuario.Email;
-                usuarioFound.Username = usuario.Username;
-                usuarioFound.PasswordHash = usuario.PasswordHash;
-                usuarioRepository.Update(usuarioFound);
-                usuarioRepository.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                usuarioRepository.Dispose();
-            }
+
+            usuarioFound = await usuarioRepository.GetByIdAsync(uuid)!;
+            usuarioFound!.Email = usuario.Email;
+            usuarioFound!.Username = usuario.Username;
+            usuarioFound.PasswordHash = usuario.PasswordHash;
+            usuarioRepository.Update(usuarioFound);
+            usuarioRepository.SaveChanges();
+
+            usuarioRepository.Dispose();
 
             return usuarioFound;
         }

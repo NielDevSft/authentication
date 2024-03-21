@@ -60,7 +60,7 @@
 //            var role = roles.First();
 
 //            //execute
-//            await roleService.Delete(role.Id);
+//            await roleService.Delete(role.Uuid);
 
 //            var usuariosExisting = (await roleService.GetAll());
 

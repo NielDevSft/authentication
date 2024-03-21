@@ -11,7 +11,7 @@ namespace JWTAuthentication.Domain.Core.Models
             ValidationResult = new ValidationResult();
         }
 
-        public int Id { get; set; }
+        public Guid Uuid { get; set; }
         [DefaultValue(1)]
         public bool Active { get; set; } = true;
         [DefaultValue(0)]
@@ -20,6 +20,7 @@ namespace JWTAuthentication.Domain.Core.Models
         public DateTime CreateAt { get; set; }
         public DateTime UpdateAt { get; set; }
 
+        public new CascadeMode CascadeMode { private get; set; }
         public abstract bool IsValid();
 
         [NotMapped]
@@ -33,7 +34,7 @@ namespace JWTAuthentication.Domain.Core.Models
             if (ReferenceEquals(this, compareTo)) return true;
             if (ReferenceEquals(null, compareTo)) return false;
 
-            return Id.Equals(compareTo.Id);
+            return Uuid.Equals(compareTo.Uuid);
         }
 
         public static bool operator ==(Entity<T> a, Entity<T> b)
@@ -52,8 +53,8 @@ namespace JWTAuthentication.Domain.Core.Models
             return !(a == b);
         }
 
-        public override int GetHashCode() => GetType().GetHashCode() * 907 + Id.GetHashCode();
+        public override int GetHashCode() => GetType().GetHashCode() * 907 + Uuid.GetHashCode();
 
-        public override string ToString() => GetType().Name + "[Id = " + Id + "]";
+        public override string ToString() => GetType().Name + "[Id = " + Uuid + "]";
     }
 }

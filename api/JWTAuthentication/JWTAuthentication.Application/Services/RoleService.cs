@@ -2,6 +2,7 @@
 using JWTAuthentication.Domain.Usuarios.Roles.Repository;
 using JWTAuthentication.Domain.Usuarios.Roles.Service;
 using Newtonsoft.Json;
+using System;
 
 namespace JWTAuthentication.Application.Services
 {
@@ -31,7 +32,7 @@ namespace JWTAuthentication.Application.Services
             return role;
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(Guid id)
         {
             try
             {
@@ -48,12 +49,12 @@ namespace JWTAuthentication.Application.Services
             }
         }
 
-        public async Task<Role> GetById(int id)
+        public async Task<Role> GetById(Guid uuid)
         {
             try
             {
                 var roleFound = roleRepository
-                    .FirstOrDefault(i => i.Id == id && !i.Removed);
+                    .FirstOrDefault(i => i.Uuid == uuid && !i.Removed);
 
                 if (roleFound! == null!)
                 {

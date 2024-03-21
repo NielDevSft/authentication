@@ -4,6 +4,7 @@ using JWTAuthentication.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JWTAuthentication.Persistence.Migrations
 {
     [DbContext(typeof(AuthenticationOrganizationContext))]
-    partial class AuthenticationOrganizationContextModelSnapshot : ModelSnapshot
+    [Migration("20240321010409_update-keys-to-guid")]
+    partial class updatekeystoguid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,7 +127,7 @@ namespace JWTAuthentication.Persistence.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("JwtClaimUuid")
                         .HasColumnType("uniqueidentifier");
@@ -144,9 +147,6 @@ namespace JWTAuthentication.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Uuid");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.HasIndex("JwtClaimUuid");
 

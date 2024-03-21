@@ -1,10 +1,12 @@
 ﻿using JWTAuthentication.API.Dtos.Logins;
 using JWTAuthentication.Domain.Authentications;
+using JWTAuthentication.Domain.Authentications.Jwts;
 using JWTAuthentication.Domain.Authentications.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace JWTAuthentication.API.Controllers
 {
@@ -54,8 +56,8 @@ namespace JWTAuthentication.API.Controllers
                     return Unauthorized();
                 }
                 var accessToken = await HttpContext.GetTokenAsync("Bearer", "access_token");
-
-                var jwtResult = await service.RefreshToken(request.RefreshToken, accessToken ?? string.Empty);
+                var refreshToken  = JsonConvert.DeserializeObject<RefreshToken>(request.RefreshToken);
+                var jwtResult = await service.RefreshToken((refreshToken!.TokenString), accessToken ?? string.Empty);
 
                 return Ok(new JwtAuthResultDto(jwtResult.AccessToken, jwtResult.RefreshToken));
             }

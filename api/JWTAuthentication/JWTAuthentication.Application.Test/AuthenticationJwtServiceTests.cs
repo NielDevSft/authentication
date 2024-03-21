@@ -25,7 +25,7 @@ namespace JWTAuthentication.Application.Test
             var roleJwtClaims = GenerateFakeData.RoleJwtClaims(fixture, 4);
             usuarios[1].PasswordHash = HashCreator.Hash("admin123123");
             usuarios[1].Email = "teste-email@gmail.com";
-            usuarios[1].JwtClaimId = 3;
+            usuarios[1].JwtClaimUuid = Guid.NewGuid();
 
             JwtAuthResult jwtAuthResult = null;
             using (AuthenticationJwtFactory factory = new AuthenticationJwtFactory(dbContext))
@@ -48,7 +48,7 @@ namespace JWTAuthentication.Application.Test
             //foi considerado um sucesso pela limitação do mock para fazer includes
             Assert.NotEmpty(jwtAuthResult.AccessToken);
             Assert.True(jwtAuthResult.RefreshToken.UserName == usuarios[1].Username);
-            Assert.Equal(543, jwtAuthResult.AccessToken.Length);
+            Assert.Equal(587, jwtAuthResult.AccessToken.Length);
         }
         [Fact]
         public async void RefreshToken_ValidInput_ShouldReturn()
@@ -130,7 +130,7 @@ namespace JWTAuthentication.Application.Test
             UsuarioFactory factory = new UsuarioFactory(dbContext);
             IUsuarioService usuarioService = factory.GetServiceInstace();
             return await usuarioService
-                .SetRoleList(usuario.Id, roles.Select(r => r.Id).ToList());
+                .SetRoleList(usuario.Uuid, roles.Select(r => r.Uuid).ToList());
         }
 
     }

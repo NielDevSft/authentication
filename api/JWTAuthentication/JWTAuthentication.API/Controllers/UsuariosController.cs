@@ -25,7 +25,7 @@ namespace JWTAuthentication.API.Controllers
                 u.Username,
                 u.PasswordHash,
                 null,
-                u.Id,
+                u.Uuid.ToString(),
                 u.CreateAt,
                 u.UpdateAt)));
             }
@@ -37,19 +37,19 @@ namespace JWTAuthentication.API.Controllers
 
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<UsuarioDto>> Details(int id)
+        public async Task<ActionResult<UsuarioDto>> Details(Guid uuid)
         {
             UsuarioDto usuario = null;
             try
             {
 
-                var usuarioExisting = await usuarioService.GetById(id);
+                var usuarioExisting = await usuarioService.GetById(uuid);
                 usuario = new UsuarioDto(
                 usuarioExisting.Email,
                     usuarioExisting.Username,
                     usuarioExisting.PasswordHash,
-                    null,
-                    usuarioExisting.Id,
+                    null!,
+                    usuarioExisting.Uuid.ToString(),
                     usuarioExisting.CreateAt,
                     usuarioExisting.UpdateAt
                 );
@@ -75,7 +75,7 @@ namespace JWTAuthentication.API.Controllers
                 });
                 usuarioDto = usuario with
                 {
-                    Id = usuarioCreated.Id,
+                    Uuid = usuarioCreated.Uuid.ToString(),
                     CreateAt = usuarioCreated.CreateAt,
                     UpdateAt = usuarioCreated.UpdateAt,
                 };
@@ -94,16 +94,17 @@ namespace JWTAuthentication.API.Controllers
             UsuarioDto usuarioDto = null;
             try
             {
-                var usuarioCreated = await usuarioService.SetRoleList(setRoleListDto.id, setRoleListDto.roles.ToList());
+                var usuarioCreated = await usuarioService.SetRoleList(Guid.Parse(setRoleListDto.uuid),
+                    setRoleListDto.roles.Select(rUuid => Guid.Parse(rUuid)).ToList());
                 usuarioDto = new UsuarioDto(usuarioCreated.Email,
                     usuarioCreated.Username,
                     usuarioCreated.PasswordHash,
                     usuarioCreated
                     .JwtClaims
                     .RoleJwtClaims.Select(c => c.Role)
-                    .Select(r => new RoleDto(r!.Id, r.Name, r.CreateAt, r.UpdateAt))
+                    .Select(r => new RoleDto(r!.Uuid.ToString(), r.Name, r.CreateAt, r.UpdateAt))
                     .ToList(),
-                    usuarioCreated.Id,
+                    usuarioCreated.Uuid.ToString(),
                     usuarioCreated.CreateAt,
                     usuarioCreated.UpdateAt);
 
