@@ -11,7 +11,6 @@ namespace JWTAuthentication.Persistence.Abstractions
     {
         protected DbContext Db;
         protected DbSet<TEntity> DbSet;
-        private DbContext _context;
         private readonly ILogger<Repository<TEntity>> _logger;
 
         public Repository(DbContext context, ILogger<Repository<TEntity>> logger)
@@ -19,11 +18,6 @@ namespace JWTAuthentication.Persistence.Abstractions
             Db = context;
             DbSet = Db.Set<TEntity>();
             _logger = logger;
-        }
-
-        protected Repository(DbContext context)
-        {
-            this._context = context;
         }
 
         public void Add(TEntity obj)
@@ -86,7 +80,7 @@ namespace JWTAuthentication.Persistence.Abstractions
         public void Remove(Guid uuid)
         {
             var obj = GetById(uuid);
-            if (obj! != null)
+            if (obj! != null!)
             {
                 obj!.Removed = true;
                 Update(obj);
@@ -138,7 +132,7 @@ namespace JWTAuthentication.Persistence.Abstractions
         {
             _logger.LogInformation($"Obtendo lista de {this.GetType().Name}");
             var query = DbSet.AsNoTracking().Where(predicate);
-            query = Includes(query, includes);
+            await Task.Run(() => query = Includes(query, includes));
             _logger.LogInformation($"Lista de {this.GetType().Name} obtida");
             return query.ToList();
         }
@@ -147,7 +141,7 @@ namespace JWTAuthentication.Persistence.Abstractions
         {
             _logger.LogInformation($"Obtendo {this.GetType().Name}, id {uuid}");
             var query = DbSet.AsNoTracking().Where(e => e.Uuid == uuid);
-            query = Includes(query, includes);
+            await Task.Run(() => query = Includes(query, includes));
             _logger.LogInformation($"{this.GetType().BaseType}, id {uuid} obtido");
             return query.FirstOrDefault();
         }

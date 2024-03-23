@@ -6,7 +6,6 @@ namespace JWTAuthentication.Domain.Core.Interfaces
     public interface IRepository<TEntity> : IDisposable where TEntity : Entity<TEntity>
     {
         void Add(TEntity obj);
-
         void Update(TEntity obj);
         TEntity? FirstOrDefault(Expression<Func<TEntity, bool>> predicate, params string[] includes);
         ICollection<TEntity> FindAll(params string[] includes);
