@@ -1,50 +1,60 @@
-// The MIT License (MIT)
-// 
-// Copyright (c) 2015-2024 Rasmus Mikkelsen
-// https://github.com/eventflow/EventFlow
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy of
-// this software and associated documentation files (the "Software"), to deal in
-// the Software without restriction, including without limitation the rights to
-// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-// the Software, and to permit persons to whom the Software is furnished to do so,
-// subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-using JWTAuthentication.Domain.Core.Core;
-using JWTAuthentication.Domain.Core.ValueObjects;
-
-namespace JWTAuthentication.Domain.Core.Entities
+﻿using FluentValidation;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using ValidationResult = FluentValidation.Results.ValidationResult;
+namespace JWTAuthentication.Domain.Core.Models
 {
-    public abstract class Entity<TIdentity> : ValueObject, IEntity<TIdentity>
-        where TIdentity : IIdentity
+    public abstract class Entity<T> : AbstractValidator<T> where T : Entity<T>
     {
-        protected Entity(TIdentity id)
+        protected Entity()
         {
-            if (id == null) throw new ArgumentNullException(nameof(id));
-
-            Id = id;
+            ValidationResult = new ValidationResult();
         }
 
-        public TIdentity Id { get; }
+        public Guid Uuid { get; set; }
+        [DefaultValue(1)]
+        public bool Active { get; set; } = true;
+        [DefaultValue(0)]
+        public bool Removed { get; set; } = false;
 
-        public IIdentity GetIdentity()
+        public DateTime CreateAt { get; set; }
+        public DateTime UpdateAt { get; set; }
+
+        public new CascadeMode CascadeMode { private get; set; }
+        public abstract bool IsValid();
+
+        [NotMapped]
+        public ValidationResult ValidationResult { get; protected set; }
+
+
+        public override bool Equals(object? obj)
         {
-            return Id;
+            var compareTo = obj as Entity<T>;
+
+            if (ReferenceEquals(this, compareTo)) return true;
+            if (ReferenceEquals(null, compareTo)) return false;
+
+            return Uuid.Equals(compareTo.Uuid);
         }
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        public static bool operator ==(Entity<T> a, Entity<T> b)
         {
-            yield return Id;
+            if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+                return true;
+
+            if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+                return false;
+
+            return a.Equals(b);
         }
+
+        public static bool operator !=(Entity<T> a, Entity<T> b)
+        {
+            return !(a == b);
+        }
+
+        public override int GetHashCode() => GetType().GetHashCode() * 907 + Uuid.GetHashCode();
+
+        public override string ToString() => GetType().Name + "[Id = " + Uuid + "]";
     }
 }
