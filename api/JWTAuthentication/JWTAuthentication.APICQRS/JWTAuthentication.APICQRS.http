@@ -1,0 +1,6 @@
+@JWTAuthentication.APICQRS_HostAddress = http://localhost:5223
+
+GET {{JWTAuthentication.APICQRS_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

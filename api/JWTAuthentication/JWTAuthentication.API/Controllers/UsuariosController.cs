@@ -3,10 +3,7 @@ using JWTAuthentication.API.Dtos.Usuarios;
 using JWTAuthentication.Domain.Usuarios;
 using JWTAuthentication.Domain.Usuarios.Service;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace JWTAuthentication.API.Controllers
 {
