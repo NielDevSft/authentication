@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\" />
+    <ProjectReference Include="..\JWTAuthentication.Common\JWTAuthentication.Common.csproj" />
+    <ProjectReference Include="..\JWTAuthentication.Domain.Core\JWTAuthentication.Domain.Core.csproj" />
+    <ProjectReference Include="..\JWTAuthentication.Domain\JWTAuthentication.Domain.csproj" />
   </ItemGroup>
 
 </Project>
