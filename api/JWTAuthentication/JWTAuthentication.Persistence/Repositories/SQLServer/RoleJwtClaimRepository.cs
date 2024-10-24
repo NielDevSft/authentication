@@ -6,11 +6,11 @@ using JWTAuthentication.Persistence.Abstractions;
 using JWTAuthentication.Persistence.Contexts;
 using Microsoft.Extensions.Logging;
 
-namespace JWTAuthentication.Persistence.Repositories
+namespace JWTAuthentication.Persistence.Repositories.SQLServer
 {
     public class RoleJwtClaimRepository : Repository<RoleJwtClaim>, IRoleJwtClaimRepository
     {
-        public RoleJwtClaimRepository(AuthenticationOrganizationContext context, ILogger<RoleJwtClaimRepository> logger) : base(context, logger)
+        public RoleJwtClaimRepository(AuthenticationOrganizationContextSqlServer context, ILogger<RoleJwtClaimRepository> logger) : base(context, logger)
         {
         }
         public async Task<JwtClaim> FindRoleJwtClaimExisting(List<Role> roles)

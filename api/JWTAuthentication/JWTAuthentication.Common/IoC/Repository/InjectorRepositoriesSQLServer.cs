@@ -2,12 +2,12 @@
 using JWTAuthentication.Domain.Usuarios.Repository;
 using JWTAuthentication.Domain.Usuarios.Roles.Repository;
 using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims.Repository;
-using JWTAuthentication.Persistence.Repositories;
+using JWTAuthentication.Persistence.Repositories.SQLServer;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace JWTAuthentication.Common.IoC
+namespace JWTAuthentication.Common.IoC.Repository
 {
-    public class InjectorRepositories
+    public class InjectorRepositoriesSQLServer
     {
         public static void AddRepositories(IServiceCollection services)
         {
@@ -15,8 +15,6 @@ namespace JWTAuthentication.Common.IoC
             services.AddScoped<IRoleJwtClaimRepository, RoleJwtClaimRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IJwtClaimRepository, JwtClaimRepository>();
-            //services.AddScoped<IPedidoRepository, PedidoRepository>();
-            //services.AddScoped<IItemPedidoRepository, ItemPedidoRepository>();
         }
     }
 }

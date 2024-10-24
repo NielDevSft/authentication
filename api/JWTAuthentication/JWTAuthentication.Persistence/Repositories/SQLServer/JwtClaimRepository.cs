@@ -4,11 +4,11 @@ using JWTAuthentication.Persistence.Abstractions;
 using JWTAuthentication.Persistence.Contexts;
 using Microsoft.Extensions.Logging;
 
-namespace JWTAuthentication.Persistence.Repositories
+namespace JWTAuthentication.Persistence.Repositories.SQLServer
 {
     public class JwtClaimRepository : Repository<JwtClaim>, IJwtClaimRepository
     {
-        public JwtClaimRepository(AuthenticationOrganizationContext context, ILogger<Repository<JwtClaim>> logger) : base(context, logger)
+        public JwtClaimRepository(AuthenticationOrganizationContextSqlServer context, ILogger<Repository<JwtClaim>> logger) : base(context, logger)
         {
 
         }

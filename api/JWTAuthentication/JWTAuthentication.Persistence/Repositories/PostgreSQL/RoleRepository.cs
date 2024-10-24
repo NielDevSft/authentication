@@ -4,13 +4,13 @@ using JWTAuthentication.Persistence.Abstractions;
 using JWTAuthentication.Persistence.Contexts;
 using Microsoft.Extensions.Logging;
 
-namespace JWTAuthentication.Persistence.Repositories
+namespace JWTAuthentication.Persistence.Repositories.PostgreSQL
 {
     public class RoleRepository : Repository<Role>, IRoleRepository
     {
         private readonly ILogger<Repository<Role>> _logger;
 
-        public RoleRepository(AuthenticationOrganizationContext context, ILogger<RoleRepository> logger) : base(context, logger)
+        public RoleRepository(AuthenticationOrganizationContextPostgreSQL context, ILogger<RoleRepository> logger) : base(context, logger)
         {
             _logger = logger;
         }

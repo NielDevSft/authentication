@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JWTAuthentication.Persistence.Migrations
 {
-    [DbContext(typeof(AuthenticationOrganizationContext))]
+    [DbContext(typeof(AuthenticationOrganizationContextSqlServer))]
     [Migration("20240321011239_alter-usuario-email-to-unique")]
     partial class alterusuarioemailtounique
     {

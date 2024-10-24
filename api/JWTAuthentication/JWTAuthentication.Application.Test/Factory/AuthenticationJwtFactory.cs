@@ -7,7 +7,7 @@ using JWTAuthentication.Domain.Authentications.Services;
 using JWTAuthentication.Domain.Usuarios;
 using JWTAuthentication.Domain.Usuarios.Roles;
 using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims;
-using JWTAuthentication.Persistence.Repositories;
+using JWTAuthentication.Persistence.Repositories.SQLServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using Moq;

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JWTAuthentication.Persistence.Migrations
 {
-    [DbContext(typeof(AuthenticationOrganizationContext))]
+    [DbContext(typeof(AuthenticationOrganizationContextSqlServer))]
     [Migration("20240312040307_alter-table-jwtclaim")]
     partial class altertablejwtclaim
     {

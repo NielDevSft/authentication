@@ -1,14 +1,11 @@
 ﻿using JWTAuthentication.Application.Authentications;
 using JWTAuthentication.Application.Configurations;
 using JWTAuthentication.Application.SetupOptions;
-using JWTAuthentication.Persistence.Contexts;
+using JWTAuthentication.Common.IoC.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Globalization;
 
 
 namespace JWTAuthentication.Common.IoC
@@ -31,16 +28,21 @@ namespace JWTAuthentication.Common.IoC
 
 
             // Repositories
-            InjectorRepositories.AddRepositories(services);
+            string? projectName = configuration.GetSection("ProjectInfo")
+                                              .GetValue<string>("ProjectName");
+            switch (projectName)
+            {
+                case ("JWTAuthentication.APICQRS"):
+                    InjectorRepositoriesPostgreSQL.AddRepositories(services);
+                    break;
+                case ("JWTAuthentication.API"):
+                    InjectorRepositoriesSQLServer.AddRepositories(services);
+                    break;
+            }
 
             //Services Bussines
             InjectorServices.AddServices(services, configuration);
 
-            services.AddDbContext<AuthenticationOrganizationContext>(options =>
-            {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-                options.EnableSensitiveDataLogging(); // Isso permite que dados sensíveis também sejam logados
-            });
         }
         public static void RegisterApplication(IApplicationBuilder application)
         {
@@ -48,27 +50,6 @@ namespace JWTAuthentication.Common.IoC
             application.UseAuthorization();
             application.UseRouting();
             application.UseHttpsRedirection();
-            using (var serviceScope = application.ApplicationServices.CreateScope())
-            {
-                try
-                {
-                    var cultureInfo = new CultureInfo("pt"); // Substitua "en-US" pela cultura desejada
-                    CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
-                    CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
-                    var context = serviceScope.ServiceProvider.GetRequiredService<AuthenticationOrganizationContext>();
-                    context.Database.Migrate();
-                }
-                catch (SqlException ex)
-                {
-                    if (ex.ErrorCode == -2146232060)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-            }
-
-
-
         }
 
     }

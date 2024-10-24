@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JWTAuthentication.Persistence.Migrations
 {
-    [DbContext(typeof(AuthenticationOrganizationContext))]
+    [DbContext(typeof(AuthenticationOrganizationContextSqlServer))]
     partial class AuthenticationOrganizationContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

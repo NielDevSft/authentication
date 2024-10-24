@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JWTAuthentication.Persistence.Migrations
 {
-    [DbContext(typeof(AuthenticationOrganizationContext))]
+    [DbContext(typeof(AuthenticationOrganizationContextSqlServer))]
     [Migration("20240321010409_update-keys-to-guid")]
     partial class updatekeystoguid
     {

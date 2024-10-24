@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JWTAuthentication.Persistence.Migrations
 {
-    [DbContext(typeof(AuthenticationOrganizationContext))]
+    [DbContext(typeof(AuthenticationOrganizationContextSqlServer))]
     [Migration("20240321143315_update-generation-of-uuid-and-index")]
     partial class updategenerationofuuidandindex
     {

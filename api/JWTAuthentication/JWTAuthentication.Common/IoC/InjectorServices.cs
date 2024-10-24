@@ -19,8 +19,6 @@ namespace JWTAuthentication.Common.IoC
             services.AddScoped<IAuthenticationJwtService, AuthenticationService>();
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IRoleService, RoleService>();
-            //services.AddScoped<IItemEstoqueService, ItemEstoqueService>();
-            //services.AddScoped<IPedidoService, PedidoService>();
         }
     }
 }

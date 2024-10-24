@@ -3,7 +3,7 @@ using JWTAuthentication.Application.Test.Contexts;
 using JWTAuthentication.Application.Test.Repositories;
 using JWTAuthentication.Domain.Usuarios.Roles;
 using JWTAuthentication.Domain.Usuarios.Roles.Service;
-using JWTAuthentication.Persistence.Repositories;
+using JWTAuthentication.Persistence.Repositories.SQLServer;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.EntityFrameworkCore;

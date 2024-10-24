@@ -1,7 +1,7 @@
 ﻿using JWTAuthentication.Application.Test.Contexts;
 using JWTAuthentication.Domain.Usuarios;
 using JWTAuthentication.Persistence.Abstractions;
-using JWTAuthentication.Persistence.Repositories;
+using JWTAuthentication.Persistence.Repositories.SQLServer;
 using Microsoft.Extensions.Logging;
 
 namespace JWTAuthentication.Application.Test.Repositories

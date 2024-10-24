@@ -19,7 +19,7 @@ namespace JWTAuthentication.Domain.Usuarios.Aggregates.Commands
         public string PasswordHash { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
 
-        public class CargoBookCommandHandler : CommandHandler<UsuarioAggregate, UsuarioId, CreateUsuarioCommand>
+        public class UsuarioCommandHandler : CommandHandler<UsuarioAggregate, UsuarioId, CreateUsuarioCommand>
         {
             public override Task ExecuteAsync(UsuarioAggregate aggregate, CreateUsuarioCommand command, CancellationToken cancellationToken)
             {
