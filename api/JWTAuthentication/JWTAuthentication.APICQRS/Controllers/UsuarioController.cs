@@ -10,10 +10,12 @@ namespace JWTAuthentication.APICQRS.Controllers
     public class UsuarioController : Controller
     {
         private readonly ICommandBus _commandBus;
+        private readonly ILogger<UsuarioController> _logger;
 
-        public UsuarioController(ICommandBus commandBus)
+        public UsuarioController(ICommandBus commandBus, ILogger<UsuarioController> logger)
         {
             _commandBus = commandBus;
+            _logger = logger;
         }
 
         // POST: UsuarioController/Create
@@ -34,6 +36,7 @@ namespace JWTAuthentication.APICQRS.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
         }
