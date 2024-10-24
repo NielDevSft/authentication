@@ -16,7 +16,14 @@ COPY ./JWTAuthentication.Domain.Core/*.csproj JWTAuthentication.Domain.Core/
 COPY ./JWTAuthentication.Persistence/*.csproj JWTAuthentication.Persistence/
 COPY ./JWTAuthentication.Application/*.csproj JWTAuthentication.Application/
 COPY ./JWTAuthentication.Application.Test/*.csproj JWTAuthentication.Application.Test/
-RUN dotnet restore 
+
+RUN dotnet restore ./JWTAuthentication.API/JWTAuthentication.API.csproj
+RUN dotnet restore ./JWTAuthentication.Common/JWTAuthentication.Common.csproj
+RUN dotnet restore ./JWTAuthentication.Domain/JWTAuthentication.Domain.csproj
+RUN dotnet restore ./JWTAuthentication.Domain.Core/JWTAuthentication.Domain.Core.csproj
+RUN dotnet restore ./JWTAuthentication.Persistence/JWTAuthentication.Persistence.csproj
+RUN dotnet restore ./JWTAuthentication.Application/JWTAuthentication.Application.csproj
+
 COPY . .
 
 WORKDIR /src/JWTAuthentication.API

@@ -363,4 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 #volumes
-./postgre-data1
+postgres-data1/

@@ -9,8 +9,6 @@ namespace JWTAuthentication.Persistence.Mapping
     {
         public override void Map(EntityTypeBuilder<T> builder)
         {
-            builder.Property(u => u.Uuid)
-                .HasDefaultValueSql("newsequentialid()");
             builder.HasKey(u => u.Uuid);
             builder.Property(e => e.Active)
                 .IsRequired();

@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 namespace JWTAuthentication.Domain.Core.Models
@@ -10,7 +11,8 @@ namespace JWTAuthentication.Domain.Core.Models
         {
             ValidationResult = new ValidationResult();
         }
-
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Uuid { get; set; }
         [DefaultValue(1)]
         public bool Active { get; set; } = true;

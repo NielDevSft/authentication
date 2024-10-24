@@ -1,31 +1,25 @@
 version: "3.8"
 
 services:
-  sql-server:
-    build:
-      context: ./data-base
+  postgres-sql:
+    image: postgres:17.0-alpine3.20
+    restart: always
+    environment:
+      POSTGRES_USER: userdb1
+      POSTGRES_PASSWORD: senhadb1
+      POSTGRES_DB: postgres-sql
     ports:
-      - "1431:1433"
-    networks:
-      - elastic
-  mssqltools:
-    image: mcr.microsoft.com/mssql-tools
-    depends_on:
-      - sql-server
+      - 5432:5432
     volumes:
-      - ./data-base/init-database.sh:/tmp/init-database.sh
-      - ./data-base/sql-scripts/init-authentication-db.sql:/tmp/init-authentication-db.sql
-    command: /bin/bash ./tmp/init-database.sh
-    networks:
-      - elastic
-  api:
+      - ./postgres-data1:/var/lib/postgresql/data
+  api-cqrs:
     build:
       context: ./api/JWTAuthentication
       dockerfile: Dockerfile.APICQRS
     ports:
-      - "5003:5000"
+      - "5004:5000"
     depends_on:
-      - mssqltools
+      - postgres-sql
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5000
@@ -39,3 +33,6 @@ services:
 networks:
   elastic:
     driver: bridge
+volumes:
+  postgres-data1:
+    driver: local

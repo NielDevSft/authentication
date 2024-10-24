@@ -14,7 +14,7 @@ using System.Globalization;
 using static JWTAuthentication.Domain.Usuarios.Aggregates.Commands.CreateUsuarioCommand;
 
 var builder = WebApplication.CreateBuilder(args);
- 
+
 // Add services to the container.
 EventFlowOptions.New(builder.Services)
 .AddCommands([typeof(CreateUsuarioCommand)])
@@ -62,8 +62,10 @@ using (var serviceScope = app.Services.CreateScope())
         var cultureInfo = new CultureInfo("pt"); // Substitua "en-US" pela cultura desejada
         CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
         CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
         var context = serviceScope.ServiceProvider.GetRequiredService<AuthenticationOrganizationContextPostgreSQL>();
         context.Database.Migrate();
+
     }
     catch (SqlException ex)
     {
@@ -84,7 +86,6 @@ app.UseSwaggerUI(c =>
 
 
 app.UseCors("AllowAll");
-app.UseAuthorization();
 
 app.MapControllers();
 NativeInjectorBootStrapper.RegisterApplication(app);
