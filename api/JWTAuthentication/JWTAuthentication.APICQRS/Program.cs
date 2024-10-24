@@ -1,3 +1,4 @@
+using JWTAuthentication.Application.Configurations;
 using JWTAuthentication.Common.IoC;
 using JWTAuthentication.Domain.Core;
 using JWTAuthentication.Domain.Core.Extensions;
@@ -24,11 +25,12 @@ EventFlowOptions.New(builder.Services)
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<AuthenticationOrganizationContextPostgreSQL>();
+Log.Logger = LoggingConfiguration.GetConfiguration(builder.Configuration);
 builder.Host.UseSerilog();
 NativeInjectorBootStrapper.RegisterServices(builder.Services, builder.Configuration);
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Authentication API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Usuario API", Version = "v1" });
 
     var securityScheme = new OpenApiSecurityScheme
     {
