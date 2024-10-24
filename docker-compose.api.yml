@@ -3,7 +3,7 @@ version: "3.8"
 services:
   sql-server:
     build:
-      context: ./data-base
+      context: ./data-base-sql-server
     ports:
       - "1431:1433"
     networks:
@@ -13,15 +13,15 @@ services:
     depends_on:
       - sql-server
     volumes:
-      - ./data-base/init-database.sh:/tmp/init-database.sh
-      - ./data-base/sql-scripts/init-authentication-db.sql:/tmp/init-authentication-db.sql
+      - ./data-base-sql-server/init-database.sh:/tmp/init-database.sh
+      - ./data-base-sql-server/sql-scripts/init-authentication-db.sql:/tmp/init-authentication-db.sql
     command: /bin/bash ./tmp/init-database.sh
     networks:
       - elastic
   api:
     build:
       context: ./api/JWTAuthentication
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.API
     ports:
       - "5002:5000"
     depends_on:
