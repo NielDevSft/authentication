@@ -17,6 +17,7 @@ namespace JWTAuthentication.Common.IoC
             MvcConfiguration.AddMvcSecurity(services);
             //jwt
             var jwtTokenConfig = configuration.GetSection("JwtConfig").Get<JwtOptions>()!;
+            services.AddControllers();
 
             services.AddAuthentication(x =>
             {
