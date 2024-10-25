@@ -12,6 +12,8 @@ services:
       - 5432:5432
     volumes:
       - ./postgres-data1:/var/lib/postgresql/data
+    networks:
+      - elastic
   api-cqrs:
     build:
       context: ./api/JWTAuthentication

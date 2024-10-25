@@ -8,15 +8,11 @@ namespace JWTAuthentication.Domain.Usuarios.States
     public class UsuarioState : AggregateState<UsuarioAggregate, UsuarioId, UsuarioState>,
         IApply<CreateUsuarioEvent>
     {
-        private IUsuarioService _usuarioService;
         public Usuario Usuario { get; set; }
-        public UsuarioState(IUsuarioService usuarioService)
-        {
-            _usuarioService = usuarioService;
-        }
+
         public void Apply(CreateUsuarioEvent aggregateEvent)
         {
-            Usuario = _usuarioService.Create(aggregateEvent.Usuario).Result;
+            Usuario = aggregateEvent.Usuario;
         }
     }
 }

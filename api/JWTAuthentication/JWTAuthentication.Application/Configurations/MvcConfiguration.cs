@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace JWTAuthentication.Application.Configurations
 {
@@ -6,7 +8,7 @@ namespace JWTAuthentication.Application.Configurations
     {
         public static void AddMvcSecurity(this IServiceCollection services)
         {
-            services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
 

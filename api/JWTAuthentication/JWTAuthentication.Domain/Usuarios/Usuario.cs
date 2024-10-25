@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using JWTAuthentication.Domain.Core.Models;
 using JWTAuthentication.Domain.Usuarios.JwsClaims;
+using Newtonsoft.Json;
 
 namespace JWTAuthentication.Domain.Usuarios
 {
@@ -18,6 +19,7 @@ namespace JWTAuthentication.Domain.Usuarios
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
+        [JsonIgnore]
         public JwtClaim? JwtClaims { get; set; }
         public Guid? JwtClaimUuid { get; set; }
         public override bool IsValid()

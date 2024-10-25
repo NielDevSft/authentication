@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Newtonsoft.Json;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,12 +20,12 @@ namespace JWTAuthentication.Domain.Core.Models
         [DefaultValue(0)]
         public bool Removed { get; set; } = false;
 
-        public DateTime CreateAt { get; set; }
-        public DateTime UpdateAt { get; set; }
-
+        public DateTime CreateAt { get; set; } = DateTime.MinValue;
+        public DateTime UpdateAt { get; set; } = DateTime.MinValue;
+        [JsonIgnore]
         public new CascadeMode CascadeMode { private get; set; }
         public abstract bool IsValid();
-
+        [JsonIgnore]
         [NotMapped]
         public ValidationResult ValidationResult { get; protected set; }
 

@@ -25,7 +25,7 @@ namespace JWTAuthentication.Persistence.Contexts
                 sqlOptions.EnableRetryOnFailure(
                     maxRetryCount: 5,
                     maxRetryDelay: TimeSpan.FromSeconds(10),
-                    errorCodesToAdd: ["00000005", "0xFFFDFFFF"]);
+                    errorCodesToAdd: ["0x80004005"]);
             });
             optionsBuilder.EnableSensitiveDataLogging();
             base.OnConfiguring(optionsBuilder);

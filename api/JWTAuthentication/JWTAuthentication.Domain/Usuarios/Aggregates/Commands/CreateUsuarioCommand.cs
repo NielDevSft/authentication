@@ -1,4 +1,7 @@
-﻿using JWTAuthentication.Domain.Core.Commands;
+﻿using JWTAuthentication.Domain.Core.Aggregates;
+using JWTAuthentication.Domain.Core.Commands;
+using JWTAuthentication.Domain.Core.ReadStores;
+using JWTAuthentication.Domain.Usuarios.Events;
 
 namespace JWTAuthentication.Domain.Usuarios.Aggregates.Commands
 {
@@ -29,7 +32,22 @@ namespace JWTAuthentication.Domain.Usuarios.Aggregates.Commands
                     Username = command.Username,
                     PasswordHash = command.PasswordHash
                 });
-                return Task.FromResult(0);
+                return Task.CompletedTask;
+            }
+        }
+
+        public class UsuarioReadModel : IReadModel,
+           IAmReadModelFor<UsuarioAggregate, UsuarioId, CreateUsuarioEvent>
+        {
+            public Usuario Usuario { get; private set; }
+
+            public Task ApplyAsync(
+                IReadModelContext context,
+                IDomainEvent<UsuarioAggregate, UsuarioId, CreateUsuarioEvent> domainEvent,
+                CancellationToken cancellationToken)
+            {
+                Usuario = domainEvent.AggregateEvent.Usuario;
+                return Task.CompletedTask;
             }
         }
 

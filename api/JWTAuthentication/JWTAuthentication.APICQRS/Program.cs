@@ -19,10 +19,9 @@ var builder = WebApplication.CreateBuilder(args);
 EventFlowOptions.New(builder.Services)
 .AddCommands([typeof(CreateUsuarioCommand)])
 .AddEvents([typeof(CreateUsuarioEvent)])
+.UseInMemoryReadStoreFor<UsuarioReadModel>()
 .AddCommandHandlers([typeof(UsuarioCommandHandler)]);
 
-
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<AuthenticationOrganizationContextPostgreSQL>();
 Log.Logger = LoggingConfiguration.GetConfiguration(builder.Configuration);
