@@ -63,6 +63,7 @@ app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("./swagger/v1/swagger.json", "Authentication API");
     c.RoutePrefix = string.Empty;
+    c.ConfigObject.AdditionalItems["persistAuthorization"] = true;
 });
 app.UseRouting();
 app.UseCors("AllowAll");

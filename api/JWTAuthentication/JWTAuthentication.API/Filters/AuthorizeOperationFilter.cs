@@ -18,4 +18,7 @@ namespace JWTAuthentication.API.Filters
             operation.Security.Add(new OpenApiSecurityRequirement
             {
                 { new OpenApiSecuritySchemeReference("Bearer"), new List<string>() }
-            
+            });
+        }
+    }
+}
