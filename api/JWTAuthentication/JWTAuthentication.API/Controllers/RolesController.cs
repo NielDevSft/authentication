@@ -13,7 +13,7 @@ namespace JWTAuthentication.API.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<RoleDto>> Create([FromBody] RoleDto role)
+        public async Task<ActionResult<RoleDto>> Create([FromBody] RoleDto role, CancellationToken cancellationToken)
         {
             RoleDto roleDto;
             try
@@ -21,7 +21,7 @@ namespace JWTAuthentication.API.Controllers
                 var roleCreated = await roleService.Create(new Role()
                 {
                     Name = role.Name
-                });
+                }, cancellationToken);
                 roleDto = role with
                 {
                     Uuid = roleCreated.Uuid.ToString(),
@@ -39,12 +39,12 @@ namespace JWTAuthentication.API.Controllers
         }
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<ICollection<RoleDto>>> Index()
+        public async Task<ActionResult<ICollection<RoleDto>>> Index(CancellationToken cancellationToken)
         {
             try
             {
 
-                var roleList = await roleService.GetAll();
+                var roleList = await roleService.GetAll(cancellationToken);
                 return Ok(roleList.Select(r =>
                 new RoleDto(r.Name, r.CreateAt, r.UpdateAt, r.Uuid.ToString())
                ));
@@ -57,11 +57,11 @@ namespace JWTAuthentication.API.Controllers
         }
         [HttpDelete("{uuid}")]
         [Authorize]
-        public async Task<ActionResult> Delete(Guid uuid)
+        public async Task<ActionResult> Delete(Guid uuid, CancellationToken cancellationToken)
         {
             try
             {
-                await roleService.Delete(uuid);
+                await roleService.Delete(uuid, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)

@@ -17,11 +17,11 @@ namespace JWTAuthentication.API.Controllers
     {
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<ICollection<UsuarioDto>>> Index()
+        public async Task<ActionResult<ICollection<UsuarioDto>>> Index(CancellationToken cancellationToken)
         {
             try
             {
-                var usuarioList = await usuarioService.GetAll();
+                var usuarioList = await usuarioService.GetAll(cancellationToken);
                 return Ok(usuarioList.Select(u =>
                 new UsuarioDto(
                 u.Email,
@@ -41,13 +41,13 @@ namespace JWTAuthentication.API.Controllers
         }
         [HttpGet("{uuid}")]
         [Authorize]
-        public async Task<ActionResult<UsuarioDto>> Details(Guid uuid)
+        public async Task<ActionResult<UsuarioDto>> Details(Guid uuid, CancellationToken cancellationToken)
         {
             UsuarioDto usuario;
             try
             {
 
-                var usuarioExisting = await usuarioService.GetById(uuid);
+                var usuarioExisting = await usuarioService.GetById(uuid, cancellationToken);
                 usuario = new UsuarioDto(
                 usuarioExisting.Email,
                     usuarioExisting.Username,
@@ -72,7 +72,7 @@ namespace JWTAuthentication.API.Controllers
             return Ok(usuario);
         }
         [HttpPost]
-        public async Task<ActionResult<UsuarioDto>> Create([FromBody] UsuarioDto usuario)
+        public async Task<ActionResult<UsuarioDto>> Create([FromBody] UsuarioDto usuario, CancellationToken cancellationToken)
         {
             UsuarioDto usuarioDto;
             try
@@ -82,7 +82,7 @@ namespace JWTAuthentication.API.Controllers
                     Email = usuario.Email,
                     Username = usuario.Username,
                     PasswordHash = usuario.PasswordHash,
-                });
+                }, cancellationToken);
                 usuarioDto = usuario with
                 {
                     Uuid = usuarioCreated.Uuid.ToString(),
@@ -99,12 +99,12 @@ namespace JWTAuthentication.API.Controllers
         }
 
         [HttpPost("{uuid}/Roles")]
-        public async Task<ActionResult<UsuarioDto>> SetRoleList(Guid uuid, [FromBody] ICollection<Guid> uuidRoles)
+        public async Task<ActionResult<UsuarioDto>> SetRoleList(Guid uuid, [FromBody] ICollection<Guid> uuidRoles, CancellationToken cancellationToken)
         {
             UsuarioDto usuarioDto;
             try
             {
-                var usuarioCreated = await usuarioService.SetRoleList(uuid, uuidRoles);
+                var usuarioCreated = await usuarioService.SetRoleList(uuid, uuidRoles, cancellationToken);
                 usuarioDto = new UsuarioDto(usuarioCreated.Email,
                     usuarioCreated.Username,
                     usuarioCreated.PasswordHash,

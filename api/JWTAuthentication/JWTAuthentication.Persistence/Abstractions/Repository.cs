@@ -20,13 +20,13 @@ namespace JWTAuthentication.Persistence.Abstractions
             _logger = logger;
         }
 
-        public void Add(TEntity obj)
+        public async Task AddAsync(TEntity obj, CancellationToken cancellationToken)
         {
             try
             {
                 obj.CreateAt = DateTime.UtcNow;
                 obj.UpdateAt = DateTime.UtcNow;
-                DbSet.Add(obj);
+                await DbSet.AddAsync(obj, cancellationToken);
             }
             catch (Exception e)
             {
@@ -39,64 +39,63 @@ namespace JWTAuthentication.Persistence.Abstractions
             Db.Dispose();
         }
 
-        public ICollection<TEntity> FindAll(params string[] includes)
+        public async Task<ICollection<TEntity>> FindAllAsync(CancellationToken cancellationToken, params string[] includes)
         {
             _logger.LogInformation($"Obtendo lista de {this.GetType().Name}");
             var query = DbSet.AsNoTracking();
             query = Includes(query, includes);
 
-            var retorno = query.ToList();
+            var retorno = await query.ToListAsync(cancellationToken);
             _logger.LogInformation($"Lista de {this.GetType().Name} obtida");
             return retorno;
         }
 
-        public ICollection<TEntity> FindAllWhere(Expression<Func<TEntity, bool>> predicate, params string[] includes)
+        public async Task<ICollection<TEntity>> FindAllWhereAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken, params string[] includes)
         {
             _logger.LogInformation($"Obtendo lista de {this.GetType().Name}");
             var query = DbSet.AsNoTracking().Where(predicate);
             query = Includes(query, includes);
+            var retorno = await query.ToListAsync(cancellationToken);
             _logger.LogInformation($"Lista de {this.GetType().Name} obtida");
-            return query.ToList();
+            return retorno;
         }
 
-        public TEntity? FirstOrDefault(Expression<Func<TEntity, bool>> predicate, params string[] includes)
+        public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken, params string[] includes)
         {
             _logger.LogInformation($"Obtendo {this.GetType().Name}");
+
             var query = DbSet.AsNoTracking().Where(predicate);
             query = Includes(query, includes);
+            var retorno = await query.FirstOrDefaultAsync(cancellationToken);
+
             _logger.LogInformation($"{this.GetType().Name} obtido");
-            return query.FirstOrDefault();
+
+            return retorno;
         }
 
-        public TEntity? GetById(Guid uuid, params string[] includes)
+        public async Task<TEntity?> GetByIdAsync(Guid uuid, CancellationToken cancellationToken, params string[] includes)
         {
             _logger.LogInformation($"Obtendo {this.GetType().Name}");
+
             var query = DbSet.AsNoTracking().Where(e => e.Uuid == uuid);
             query = Includes(query, includes);
+            var retorno = await query.FirstOrDefaultAsync(cancellationToken);
+
             _logger.LogInformation($"{this.GetType().Name}, id {uuid} obtido");
-            return query.FirstOrDefault();
+
+            return retorno;
         }
 
-        public void Remove(Guid uuid)
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            var obj = GetById(uuid);
-            if (obj! != null!)
-            {
-                obj!.Removed = true;
-                Update(obj);
-            }
+            return Db.SaveChangesAsync(cancellationToken);
         }
 
-        public int SaveChanges()
-        {
-            return Db.SaveChanges();
-
-        }
-
-        public void Update(TEntity obj)
+        public async Task UpdateAsync(TEntity obj, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Atualizando objeto {this.GetType().Name}, id {obj.Uuid}");
             obj.UpdateAt = DateTime.UtcNow;
+            
             DbSet.Update(obj);
         }
 
@@ -128,30 +127,29 @@ namespace JWTAuthentication.Persistence.Abstractions
             return parentRow;
         }
 
-        public async Task<ICollection<TEntity>> FindAllWhereAsync(Expression<Func<TEntity, bool>> predicate, params string[] includes)
+        public Task RemoveAsync(TEntity obj, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Obtendo lista de {this.GetType().Name}");
-            var query = DbSet.AsNoTracking().Where(predicate);
-            await Task.Run(() => query = Includes(query, includes));
-            _logger.LogInformation($"Lista de {this.GetType().Name} obtida");
-            return query.ToList();
-        }
-
-        public async Task<TEntity?> GetByIdAsync(Guid uuid, params string[] includes)
-        {
-            _logger.LogInformation($"Obtendo {this.GetType().Name}, id {uuid}");
-            var query = DbSet.AsNoTracking().Where(e => e.Uuid == uuid);
-            await Task.Run(() => query = Includes(query, includes));
-            _logger.LogInformation($"{this.GetType().BaseType}, id {uuid} obtido");
-            return query.FirstOrDefault();
-        }
-
-        public void Remove(TEntity obj)
-        {
-            if (obj! != null!)
+            if (obj is not null)
             {
                 obj!.Removed = true;
-                Update(obj);
+                return UpdateAsync(obj, cancellationToken);
+            }
+            else
+            {
+                throw new Exception($"{this.GetType().Name} não encontrado para remoção");
+            }
+        }
+
+        public async Task RemoveAsync(Guid uuid, CancellationToken cancellationToken)
+        {
+            var obj = await FirstOrDefaultAsync(ob => ob.Uuid == uuid, cancellationToken);
+            if (obj is not null)
+            {
+                await RemoveAsync(obj, cancellationToken);
+            }
+            else
+            {
+                throw new Exception($"{this.GetType().Name} não encontrado para remoção");
             }
         }
     }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace JWTAuthentication.API.Controllers
 {
@@ -15,7 +15,7 @@ namespace JWTAuthentication.API.Controllers
     public class AuthenticationsController(IAuthenticationJwtService service, ILogger<AuthenticationsController> logger) : Controller
     {
         [HttpPost("login")]
-        public async Task<ActionResult<JwtAuthResultDto>> Login([FromBody] LoginDto loginRequest)
+        public async Task<ActionResult<JwtAuthResultDto>> Login([FromBody] LoginDto loginRequest, CancellationToken cancellationToken)
         {
             try
             {
@@ -23,7 +23,7 @@ namespace JWTAuthentication.API.Controllers
                 {
                     Email = loginRequest.Email,
                     Password = loginRequest.Password
-                });
+                }, cancellationToken);
 
                 return Ok(new JwtAuthResultDto(token.AccessToken, token.RefreshToken));
             }
@@ -56,7 +56,7 @@ namespace JWTAuthentication.API.Controllers
                     return Unauthorized();
                 }
                 var accessToken = await HttpContext.GetTokenAsync("Bearer", "access_token");
-                var refreshToken = JsonConvert.DeserializeObject<RefreshToken>(request.RefreshToken);
+                var refreshToken = JsonSerializer.Deserialize<RefreshToken>(request.RefreshToken);
                 var jwtResult = await service.RefreshToken((refreshToken!.TokenString), accessToken ?? string.Empty);
 
                 return Ok(new JwtAuthResultDto(jwtResult.AccessToken, jwtResult.RefreshToken));

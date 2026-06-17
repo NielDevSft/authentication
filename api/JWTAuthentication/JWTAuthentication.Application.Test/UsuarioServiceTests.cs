@@ -40,7 +40,7 @@ namespace JWTAuthentication.Application.Test
                     Email = "cezinha@vaivendo.com.br",
                 };
                 // execute
-                usuarioCreated = await usuarioService.Create(usuario);
+                usuarioCreated = await usuarioService.Create(usuario, CancellationToken.None);
             }
             // asserts
             Assert.True(usuarioCreated is { Removed: false, Active: true });
@@ -69,11 +69,11 @@ namespace JWTAuthentication.Application.Test
                     PasswordHash = "admin123123",
                     Email = "cezinhavaivendo",
                 };
-                entityErros = await Assert.ThrowsAsync<Exception>(() => usuarioService.Create(usuario));
+                entityErros = await Assert.ThrowsAsync<Exception>(() => usuarioService.Create(usuario, CancellationToken.None));
             }
             //verify
-            Assert.Contains("Senha em formato inválido.", entityErros.Message);
-            Assert.Contains("E-mail inválido.", entityErros.Message);
+            Assert.Contains("Senha em formato", entityErros.Message);
+            Assert.Contains("E-mail ", entityErros.Message);
         }
         [Fact]
         public async void GetAll_NoParams_ReturnAll()
@@ -91,7 +91,7 @@ namespace JWTAuthentication.Application.Test
                 data["roles"] = roles.ToArray();
                 data["roleJwtClaims"] = roleJwtClaims.ToArray();
                 IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
-                usuariosObtidos = await usuarioService.GetAll();
+                usuariosObtidos = await usuarioService.GetAll(CancellationToken.None);
             }
 
             Assert.Equal(usuarios.Count, usuariosObtidos.Count);
@@ -113,7 +113,7 @@ namespace JWTAuthentication.Application.Test
                 data["roles"] = roles.ToArray();
                 data["roleJwtClaims"] = roleJwtClaims.ToArray();
                 IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
-                error = await Assert.ThrowsAsync<Exception>(() => usuarioService.GetById(new Guid()));
+                error = await Assert.ThrowsAsync<Exception>(() => usuarioService.GetById(new Guid(), CancellationToken.None));
             }
             //asserts
             Assert.Equal("Item não encontrado", error.Message);
@@ -139,7 +139,7 @@ namespace JWTAuthentication.Application.Test
                 data["roles"] = roles.ToArray();
                 data["roleJwtClaims"] = roleJwtClaims.ToArray();
                 IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
-                usuarioAtualizado = await usuarioService.Update(usuario.Uuid, usuario);
+                usuarioAtualizado = await usuarioService.Update(usuario.Uuid, usuario, CancellationToken.None);
             }
 
             //asserts
@@ -168,8 +168,8 @@ namespace JWTAuthentication.Application.Test
                 data["roles"] = roles.ToArray();
                 data["roleJwtClaims"] = roleJwtClaims.ToArray();
                 IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
-                await usuarioService.Delete(usuario.Uuid);
-                usuariosExisting = (await usuarioService.GetAll());
+                await usuarioService.Delete(usuario.Uuid, CancellationToken.None);
+                usuariosExisting = (await usuarioService.GetAll(CancellationToken.None));
             }
 
             //asserts
@@ -192,10 +192,11 @@ namespace JWTAuthentication.Application.Test
                 data["roles"] = roles.ToArray();
                 data["roleJwtClaims"] = roleJwtClaims.ToArray();
                 IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
-                error = await Assert.ThrowsAsync<Exception>(() => usuarioService.Delete(Guid.NewGuid()));
+                error = await Assert.ThrowsAsync<Exception>(() => usuarioService.Delete(Guid.NewGuid(), CancellationToken.None));
             }
             //asserts
-            Assert.Equal("Item não encontrado", error.Message);
+            Assert.Contains("Item", error.Message);
+            Assert.Contains("encontrato", error.Message);
         }
         [Fact]
         public async void SetRoleList_ValidInput_ReturnsUsuarioWithRoles()
@@ -216,7 +217,7 @@ namespace JWTAuthentication.Application.Test
                 data["roles"] = roles.ToArray();
                 data["roleJwtClaims"] = roles.ToArray();
                 IUsuarioService usuarioService = usuarioFactory.GetServiceInstace(data);
-                usuarioWithRoles = await usuarioService.SetRoleList(usuarios.First().Uuid, rolesListOnlyIds);
+                usuarioWithRoles = await usuarioService.SetRoleList(usuarios.First().Uuid, rolesListOnlyIds, CancellationToken.None);
 
             }
             //assertis

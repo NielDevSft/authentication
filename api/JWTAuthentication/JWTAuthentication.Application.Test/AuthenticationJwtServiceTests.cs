@@ -43,7 +43,7 @@ namespace JWTAuthentication.Application.Test
                 {
                     Email = "teste-email@gmail.com",
                     Password = HashCreator.Hash("admin123123")
-                });
+                }, CancellationToken.None);
             }
             //foi considerado um sucesso pela limitação do mock para fazer includes
             Assert.NotEmpty(jwtAuthResult.AccessToken);
@@ -80,7 +80,7 @@ namespace JWTAuthentication.Application.Test
                 {
                     Email = usuarios[1].Email,
                     Password = HashCreator.Hash("admin123123")
-                });
+                }, CancellationToken.None);
 
                 jwtAuthResultComRefreshToken2 = await usuarioService
                     .RefreshToken(jwtAuthResultComRefreshToken1.RefreshToken.TokenString,
@@ -115,7 +115,7 @@ namespace JWTAuthentication.Application.Test
                 {
                     Email = usuarios[1].Email,
                     Password = usuarios[1].PasswordHash
-                });
+                }, CancellationToken.None);
 
                 await usuarioService.Logout(jwtAuthResultComRefreshToken1.RefreshToken.TokenString);
                 jwtAuthResultComUnlogged = await usuarioService.RefreshToken(jwtAuthResultComRefreshToken1.RefreshToken.TokenString,
@@ -130,7 +130,7 @@ namespace JWTAuthentication.Application.Test
             UsuarioFactory factory = new UsuarioFactory(dbContext);
             IUsuarioService usuarioService = factory.GetServiceInstace();
             return await usuarioService
-                .SetRoleList(usuario.Uuid, roles.Select(r => r.Uuid).ToList());
+                .SetRoleList(usuario.Uuid, roles.Select(r => r.Uuid).ToList(), CancellationToken.None);
         }
 
     }

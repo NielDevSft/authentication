@@ -15,13 +15,13 @@ namespace JWTAuthentication.Persistence.Repositories
             _logger = logger;
         }
 
-        public async Task<ICollection<Role>> GetManyAllRolesByIdAsync(ICollection<Guid> ids)
+        public async Task<ICollection<Role>> GetManyAllRolesByIdAsync(ICollection<Guid> ids, CancellationToken cancellationToken)
         {
             var list = new List<Role>();
             try
             {
                 _logger.LogInformation("Buscando Roles");
-                list.AddRange(FindAllWhere(r => ids.Contains(r.Uuid)).ToList());
+                list.AddRange((await FindAllWhereAsync(r => ids.Contains(r.Uuid), cancellationToken)).ToList());
                 _logger.LogInformation("Finalidado");
             }
             catch (Exception ex)

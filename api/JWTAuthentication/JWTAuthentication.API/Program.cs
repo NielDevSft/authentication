@@ -3,7 +3,7 @@ using JWTAuthentication.Application.Configurations;
 using JWTAuthentication.Common.IoC;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +27,7 @@ NativeInjectorBootStrapper.RegisterServices(builder.Services, builder.Configurat
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Authentication API", Version = "v1" });
+    var referente = new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme);
     var securityScheme = new OpenApiSecurityScheme
     {
         Name = "Authentication API",
@@ -34,18 +35,9 @@ builder.Services.AddSwaggerGen(c =>
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
         Scheme = "bearer", // must be lowercase
-        BearerFormat = "JWT",
-        Reference = new OpenApiReference
-        {
-            Id = JwtBearerDefaults.AuthenticationScheme,
-            Type = ReferenceType.SecurityScheme
-        }
+        BearerFormat = "JWT"
     };
-    c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {securityScheme, Array.Empty<string>()}
-            });
+    c.AddSecurityDefinition("Security Definitions :)", securityScheme);
 });
 
 

@@ -13,10 +13,9 @@ namespace JWTAuthentication.Persistence.Repositories
         public RoleJwtClaimRepository(AuthenticationOrganizationContext context, ILogger<RoleJwtClaimRepository> logger) : base(context, logger)
         {
         }
-        public async Task<JwtClaim> FindRoleJwtClaimExisting(List<Role> roles)
+        public async Task<JwtClaim> FindRoleJwtClaimExisting(List<Role> roles, CancellationToken cancellationToken)
         {
-
-            var roleClaimContainers = await FindAllWhereAsync(rjc => roles.Contains(rjc.Role!), "Role", "JwtClaim");
+            var roleClaimContainers = await FindAllWhereAsync(rjc => roles.Contains(rjc.Role!), cancellationToken, "Role", "JwtClaim");
 
             var claimCounts = roleClaimContainers
             .Select(container => container.JwtClaim!)
@@ -25,10 +24,14 @@ namespace JWTAuthentication.Persistence.Repositories
 
             var claimWithSameRoles = claimCounts.ToList().FirstOrDefault(cc => cc.Value == roles.Count).Key;
 
-            if (claimWithSameRoles != null)
+            if (claimWithSameRoles is not null)
             {
                 claimWithSameRoles.RoleJwtClaims = roleClaimContainers
                 .ToList().FindAll(rc => rc.JwtClaimUuid == claimWithSameRoles.Uuid);
+            }
+            else
+            {
+                throw new Exception("Claim não encontrada");
             }
 
             return claimWithSameRoles;

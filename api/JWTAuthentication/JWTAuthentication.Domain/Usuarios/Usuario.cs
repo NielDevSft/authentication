@@ -22,8 +22,7 @@ namespace JWTAuthentication.Domain.Usuarios
         public Guid? JwtClaimUuid { get; set; }
         public override bool IsValid()
         {
-            var validatorResult = Validate(this);
-            ValidationResult = validatorResult;
+            ValidationResult = Validate(this);
             return ValidationResult.IsValid;
         }
     }

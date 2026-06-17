@@ -7,8 +7,8 @@ using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims;
 using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims.Repository;
 using JWTAuthentication.Domain.Usuarios.Service;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System.Data;
+using System.Text.Json;
 
 namespace JWTAuthentication.Application.Services
 {
@@ -17,66 +17,59 @@ namespace JWTAuthentication.Application.Services
         IRoleJwtClaimRepository roleJwtClaimRepository) : IUsuarioService
     {
 
-        public async Task<Usuario> Create(Usuario usuario)
+        public async Task<Usuario> Create(Usuario usuario, CancellationToken cancellationToken)
         {
-
             if (!usuario.IsValid())
-                throw new Exception(JsonConvert
-                    .SerializeObject(usuario
+                throw new Exception(JsonSerializer
+                    .Serialize(usuario
                     .ValidationResult
                     .Errors));
 
-            usuarioRepository.Add(usuario);
-            usuarioRepository.SaveChanges();
-
-
+            await usuarioRepository.AddAsync(usuario, cancellationToken);
+            await usuarioRepository.SaveChangesAsync(cancellationToken);
 
             return usuario;
         }
 
-        public async Task Delete(Guid uuid)
+        public Task Delete(Guid uuid, CancellationToken cancellationToken)
         {
-            await Task.Run(() => usuarioRepository.Remove(uuid));
-            usuarioRepository.SaveChanges();
+            return usuarioRepository.RemoveAsync(uuid, cancellationToken);
         }
 
-        public async Task<List<Usuario>> GetAll()
+        public async Task<List<Usuario>> GetAll(CancellationToken cancellationToken)
         {
 
             var usuairoList = new List<Usuario>();
 
-            usuairoList.AddRange(await usuarioRepository.FindAllWhereAsync(i => !i.Removed));
+            usuairoList.AddRange(await usuarioRepository.FindAllWhereAsync(i => !i.Removed, cancellationToken));
 
             return usuairoList;
         }
 
-        public async Task<Usuario> GetById(Guid Uuid)
+        public async Task<Usuario> GetById(Guid Uuid, CancellationToken cancellationToken)
         {
 
 
             var usuarioFound = (await usuarioRepository
-                .FindAllWhereAsync(i => i.Uuid == Uuid && !i.Removed, "JwtClaims")).FirstOrDefault();
+                .FindAllWhereAsync(i => i.Uuid == Uuid && !i.Removed, cancellationToken, "JwtClaims")).FirstOrDefault();
             if (usuarioFound! == null!)
             {
                 throw new Exception("Item não encontrado");
             }
             if (usuarioFound.JwtClaims! != null!)
                 usuarioFound.JwtClaims!.RoleJwtClaims = await roleJwtClaimRepository
-                    .FindAllWhereAsync(rjc => rjc.JwtClaimUuid == usuarioFound.JwtClaimUuid, "Role", "JwtClaim");
-
+                    .FindAllWhereAsync(rjc => rjc.JwtClaimUuid == usuarioFound.JwtClaimUuid, cancellationToken, "Role", "JwtClaim");
 
             return usuarioFound;
 
-
-
         }
 
-        public async Task<Usuario> SetRoleList(Guid uuid, ICollection<Guid> roleIdList)
+        public async Task<Usuario> SetRoleList(Guid uuid, ICollection<Guid> roleIdList, CancellationToken cancellationToken)
         {
             var roles = new List<Role>();
             Usuario usuario = null!;
-            var usuarioTask = usuarioRepository.GetByIdAsync(uuid);
-            var rolesTask = roleRepository.FindAllWhereAsync(r => roleIdList.Contains(r.Uuid));
+            var usuarioTask = usuarioRepository.GetByIdAsync(uuid, cancellationToken);
+            var rolesTask = roleRepository.FindAllWhereAsync(r => roleIdList.Contains(r.Uuid), cancellationToken);
             var roleJwtClaim = new List<RoleJwtClaim>();
 
             await Task.WhenAll(usuarioTask, rolesTask);
@@ -93,13 +86,13 @@ namespace JWTAuthentication.Application.Services
                 throw new ArgumentException("Usuário não encontrado");
             }
 
-            JwtClaim claim = await roleJwtClaimRepository.FindRoleJwtClaimExisting(roles.ToList());
+            JwtClaim claim = await roleJwtClaimRepository.FindRoleJwtClaimExisting(roles.ToList(), CancellationToken.None);
 
             if (claim != null!)
             {
                 usuario.JwtClaimUuid = claim.Uuid;
                 usuario.JwtClaims = claim;
-                usuarioRepository.Update(usuario);
+                await usuarioRepository.UpdateAsync(usuario, cancellationToken);
                 return usuario;
             }
             usuario.JwtClaims = new JwtClaim()
@@ -114,9 +107,9 @@ namespace JWTAuthentication.Application.Services
                     RoleUuid = r.Uuid,
                     Role = r,
                 }).ToList();
-            usuarioRepository.Update(usuario);
+            await usuarioRepository.UpdateAsync(usuario, cancellationToken);
 
-            usuarioRepository.SaveChanges();
+            await usuarioRepository.SaveChangesAsync(cancellationToken);
             return usuario;
         }
 
@@ -128,23 +121,18 @@ namespace JWTAuthentication.Application.Services
             return subject;
         }
 
-        public async Task<Usuario> Update(Guid uuid, Usuario usuario)
+        public async Task<Usuario> Update(Guid uuid, Usuario usuario, CancellationToken cancellationToken)
         {
             Usuario? usuarioFound = null;
 
-            usuarioFound = await usuarioRepository.GetByIdAsync(uuid)!;
+            usuarioFound = await usuarioRepository.GetByIdAsync(uuid, cancellationToken)!;
             usuarioFound!.Email = usuario.Email;
             usuarioFound!.Username = usuario.Username;
             usuarioFound.PasswordHash = usuario.PasswordHash;
-            usuarioRepository.Update(usuarioFound);
-            usuarioRepository.SaveChanges();
-
-
+            await usuarioRepository.UpdateAsync(usuarioFound, cancellationToken);
+            await usuarioRepository.SaveChangesAsync(cancellationToken);
 
             return usuarioFound;
         }
-
-
-
     }
 }

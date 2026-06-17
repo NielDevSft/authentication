@@ -5,17 +5,15 @@ namespace JWTAuthentication.Domain.Core.Interfaces
 {
     public interface IRepository<TEntity> : IDisposable where TEntity : Entity<TEntity>
     {
-        void Add(TEntity obj);
-        void Update(TEntity obj);
-        TEntity? FirstOrDefault(Expression<Func<TEntity, bool>> predicate, params string[] includes);
-        ICollection<TEntity> FindAll(params string[] includes);
-        ICollection<TEntity> FindAllWhere(Expression<Func<TEntity, bool>> predicate, params string[] includes);
-        void Remove(Guid uuid);
-        void Remove(TEntity obj);
-        int SaveChanges();
-        TEntity? GetById(Guid uuid, params string[] includes);
-        Task<TEntity?> GetByIdAsync(Guid uuid, params string[] includes);
-        Task<ICollection<TEntity>> FindAllWhereAsync(Expression<Func<TEntity, bool>> predicate, params string[] includes);
+        Task AddAsync(TEntity obj, CancellationToken cancellationToken);
+        Task UpdateAsync(TEntity obj, CancellationToken cancellationToken);
+        Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken, params string[] includes);
+        Task<ICollection<TEntity>> FindAllAsync(CancellationToken cancellationToken, params string[] includes);
+        Task RemoveAsync(Guid uuid, CancellationToken cancellationToken);
+        Task RemoveAsync(TEntity obj, CancellationToken cancellationToken);
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+        Task<TEntity?> GetByIdAsync(Guid uuid, CancellationToken cancellationToken, params string[] includes);
+        Task<ICollection<TEntity>> FindAllWhereAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken, params string[] includes);
     }
 }
 

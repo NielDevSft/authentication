@@ -14,7 +14,7 @@ namespace JWTAuthentication.Application.Services
         IRoleJwtClaimRepository roleJwtClaimRepository,
         IJWTProvider jwtProvider) : IAuthenticationJwtService
     {
-        public async Task<JwtAuthResult> Login(Authentication authentication)
+        public async Task<JwtAuthResult> Login(Authentication authentication, CancellationToken cancellationToken)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace JWTAuthentication.Application.Services
                         .Errors.First().ToString()); ;
                 }
                 var user = (await usuarioRepository
-                    .FindAllWhereAsync(x => x.Email == authentication.Email))
+                    .FindAllWhereAsync(x => x.Email == authentication.Email, cancellationToken))
                     .First();
                 if (user == null || user.PasswordHash != authentication.Password)
                 {
@@ -33,8 +33,9 @@ namespace JWTAuthentication.Application.Services
                         "Usuário ou senha inválidos");
                 }
                 List<RoleJwtClaim> roleClaims = (await roleJwtClaimRepository
-                    .FindAllWhereAsync(ur => ur.JwtClaim!.Uuid == user.JwtClaimUuid, "Role", "JwtClaim"))
+                    .FindAllWhereAsync(ur => ur.JwtClaim!.Uuid == user.JwtClaimUuid, cancellationToken, "Role", "JwtClaim"))
                     .ToList();
+
                 List<Claim> claimsTypeRole = new List<Claim>();
 
                 if (roleClaims.Count > 0)
