@@ -8,6 +8,8 @@ using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims.Repository;
 using JWTAuthentication.Domain.Usuarios.Service;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace JWTAuthentication.Application.Services
@@ -25,6 +27,7 @@ namespace JWTAuthentication.Application.Services
                     .ValidationResult
                     .Errors));
 
+            usuario.PasswordHash = ComputeSha1(usuario.PasswordHash);
             await usuarioRepository.AddAsync(usuario, cancellationToken);
             await usuarioRepository.SaveChangesAsync(cancellationToken);
 
@@ -113,6 +116,12 @@ namespace JWTAuthentication.Application.Services
             return usuario;
         }
 
+        private static string ComputeSha1(string input)
+        {
+            var bytes = SHA1.HashData(Encoding.UTF8.GetBytes(input));
+            return Convert.ToHexString(bytes).ToLowerInvariant();
+        }
+
         private static string BuildSubjectClaim(List<Role> roles)
         {
             var subject = roles.First().Name;
@@ -128,7 +137,7 @@ namespace JWTAuthentication.Application.Services
             usuarioFound = await usuarioRepository.GetByIdAsync(uuid, cancellationToken)!;
             usuarioFound!.Email = usuario.Email;
             usuarioFound!.Username = usuario.Username;
-            usuarioFound.PasswordHash = usuario.PasswordHash;
+            usuarioFound.PasswordHash = ComputeSha1(usuario.PasswordHash);
             await usuarioRepository.UpdateAsync(usuarioFound, cancellationToken);
             await usuarioRepository.SaveChangesAsync(cancellationToken);
 

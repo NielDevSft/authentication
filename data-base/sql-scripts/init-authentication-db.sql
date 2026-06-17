@@ -1,37 +1,35 @@
-USE [master]
-GO
+-- The database DBAuthentication is created by the POSTGRES_DB environment variable.
+-- This script runs connected to that database as the postgres superuser.
 
-IF DB_ID('DBAuthentication') IS NOT NULL
-  set noexec on 
+-- Enable pgcrypto for SHA1 hashing
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE DATABASE [DBAuthentication];
-GO
+-- Create schema
+CREATE SCHEMA IF NOT EXISTS app;
 
-USE [DBAuthentication]
-GO
+-- Create migrator user
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'migrator') THEN
+    CREATE ROLE migrator LOGIN PASSWORD 'migrator123!';
+  END IF;
+END
+$$;
 
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
+-- Create AdmAuthentication user
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'AdmAuthentication') THEN
+    CREATE ROLE "AdmAuthentication" LOGIN PASSWORD 'AuthCation@247';
+  END IF;
+END
+$$;
 
-CREATE LOGIN [migrator] WITH PASSWORD = 'migrator123!'
-GO
-
-CREATE SCHEMA app
-GO
-
-CREATE USER [migrator] FOR LOGIN [migrator] WITH DEFAULT_SCHEMA=[app]
-GO
-
-EXEC sp_addrolemember N'db_owner', N'migrator'
-GO
-
-CREATE LOGIN [AdmAuthentication] WITH PASSWORD = 'AuthCation@247'
-GO
-
-CREATE USER [AdmAuthentication] FOR LOGIN [AdmAuthentication] WITH DEFAULT_SCHEMA=[app]
-GO
-
-EXEC sp_addrolemember N'db_owner', N'AdmAuthentication'
-GO
+GRANT ALL PRIVILEGES ON DATABASE "DBAuthentication" TO migrator;
+GRANT ALL PRIVILEGES ON DATABASE "DBAuthentication" TO "AdmAuthentication";
+GRANT USAGE, CREATE ON SCHEMA app TO migrator;
+GRANT USAGE, CREATE ON SCHEMA app TO "AdmAuthentication";
+ALTER DEFAULT PRIVILEGES IN SCHEMA app GRANT ALL ON TABLES TO migrator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA app GRANT ALL ON TABLES TO "AdmAuthentication";
+ALTER DEFAULT PRIVILEGES IN SCHEMA app GRANT ALL ON SEQUENCES TO migrator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA app GRANT ALL ON SEQUENCES TO "AdmAuthentication";

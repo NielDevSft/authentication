@@ -4,11 +4,12 @@ using JWTAuthentication.Application.SetupOptions;
 using JWTAuthentication.Persistence.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
+using System.Threading;
 
 
 namespace JWTAuthentication.Common.IoC
@@ -38,37 +39,41 @@ namespace JWTAuthentication.Common.IoC
 
             services.AddDbContext<AuthenticationOrganizationContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-                options.EnableSensitiveDataLogging(); // Isso permite que dados sensíveis também sejam logados
+                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
+                    npgsql =>
+                    {
+                        npgsql.MigrationsHistoryTable("__EFMigrationsHistory", "app");
+                        npgsql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorCodesToAdd: null);
+                    });
+                options.EnableSensitiveDataLogging();
             });
         }
         public static void RegisterApplication(IApplicationBuilder application)
         {
-            application.UseAuthentication();
-            application.UseAuthorization();
-            application.UseRouting();
-            application.UseHttpsRedirection();
             using (var serviceScope = application.ApplicationServices.CreateScope())
             {
-                try
+                var context = serviceScope.ServiceProvider.GetRequiredService<AuthenticationOrganizationContext>();
+                var cultureInfo = new CultureInfo("pt");
+                CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+                CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+                var retries = 10;
+                while (retries > 0)
                 {
-                    var cultureInfo = new CultureInfo("pt"); // Substitua "en-US" pela cultura desejada
-                    CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
-                    CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
-                    var context = serviceScope.ServiceProvider.GetRequiredService<AuthenticationOrganizationContext>();
-                    context.Database.Migrate();
-                }
-                catch (SqlException ex)
-                {
-                    if (ex.ErrorCode == -2146232060)
+                    try
                     {
-                        Console.WriteLine(ex.Message);
+                        context.Database.Migrate();
+                        break;
+                    }
+                    catch (NpgsqlException ex)
+                    {
+                        retries--;
+                        Console.WriteLine($"Migration falhou, tentativas restantes: {retries}. Erro: {ex.Message}");
+                        if (retries == 0) throw;
+                        Thread.Sleep(3000);
                     }
                 }
             }
-
-
-
         }
 
     }

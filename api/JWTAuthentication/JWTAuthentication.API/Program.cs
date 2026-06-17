@@ -1,4 +1,5 @@
 
+using JWTAuthentication.API.Filters;
 using JWTAuthentication.Application.Configurations;
 using JWTAuthentication.Common.IoC;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,21 +24,34 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
 NativeInjectorBootStrapper.RegisterServices(builder.Services, builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader());
+});
+
 
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Authentication API", Version = "v1" });
-    var referente = new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme);
+
     var securityScheme = new OpenApiSecurityScheme
     {
-        Name = "Authentication API",
+        Name = "Authorization",
         Description = "Enter JWT Bearer token **_only_**",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
-        Scheme = "bearer", // must be lowercase
+        Scheme = "bearer",
         BearerFormat = "JWT"
     };
-    c.AddSecurityDefinition("Security Definitions :)", securityScheme);
+    c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
+    c.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
+    {
+        { new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme), new List<string>() }
+    });
+    c.OperationFilter<AuthorizeOperationFilter>();
 });
 
 
@@ -52,6 +66,8 @@ app.UseSwaggerUI(c =>
 });
 app.UseRouting();
 app.UseCors("AllowAll");
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 NativeInjectorBootStrapper.RegisterApplication(app);

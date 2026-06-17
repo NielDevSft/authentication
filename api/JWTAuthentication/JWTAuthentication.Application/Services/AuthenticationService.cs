@@ -7,6 +7,8 @@ using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims;
 using JWTAuthentication.Domain.Usuarios.Roles.RoleJwtClaims.Repository;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace JWTAuthentication.Application.Services
 {
@@ -27,7 +29,7 @@ namespace JWTAuthentication.Application.Services
                 var user = (await usuarioRepository
                     .FindAllWhereAsync(x => x.Email == authentication.Email, cancellationToken))
                     .First();
-                if (user == null || user.PasswordHash != authentication.Password)
+                if (user == null || user.PasswordHash != ComputeSha1(authentication.Password))
                 {
                     throw new ArgumentException("" +
                         "Usuário ou senha inválidos");
@@ -67,8 +69,14 @@ namespace JWTAuthentication.Application.Services
             }
             finally
             {
-                
+
             }
+        }
+
+        private static string ComputeSha1(string input)
+        {
+            var bytes = SHA1.HashData(Encoding.UTF8.GetBytes(input));
+            return Convert.ToHexString(bytes).ToLowerInvariant();
         }
 
         public async Task Logout(string userName)

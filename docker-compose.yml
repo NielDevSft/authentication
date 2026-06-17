@@ -1,21 +1,21 @@
 version: "3.8"
 
 services:
-  sql-server:
-    build:
-      context: ./data-base
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: AuthCation@247
+      POSTGRES_DB: DBAuthentication
     ports:
-      - "1431:1433"
-    networks:
-      - elastic
-  mssqltools:
-    image: mcr.microsoft.com/mssql-tools
-    depends_on:
-      - sql-server
+      - "5432:5432"
     volumes:
-      - ./data-base/init-database.sh:/tmp/init-database.sh
-      - ./data-base/sql-scripts/init-authentication-db.sql:/tmp/init-authentication-db.sql
-    command: /bin/bash ./tmp/init-database.sh
+      - ./data-base/sql-scripts/init-authentication-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d DBAuthentication"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - elastic
   api:
@@ -25,15 +25,11 @@ services:
     ports:
       - "5002:5000"
     depends_on:
-      - mssqltools
+      postgres:
+        condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5000
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=mypassword123
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/certificate.pfx
-    volumes:
-      - ./api/JWTAuthentication/certificate.pfx:/https/certificate.pfx:ro
-    restart: always
     networks:
       - elastic
 networks:
